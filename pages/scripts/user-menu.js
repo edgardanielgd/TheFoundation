@@ -1,4 +1,4 @@
-var auth0 = null;
+﻿var auth0 = null;
 const logout = async () => {
     if(auth0){
         await auth0.logout({
@@ -13,7 +13,9 @@ const getUserInfo = async (user,divElement) => {
         img.src = user.picture;
         img.width = 50;
         img.height = 50;
-        img.onerror = "this.src = 'http://cdn.onlinewebfonts.com/svg/img_76927.png'";
+        img.onerror = () => {
+            img.src="http://cdn.onlinewebfonts.com/svg/img_76927.png";
+        }
 
         divElement.appendChild(img);
 
@@ -66,6 +68,7 @@ const getDefaultLogin = async (divElement) => {
 
 const setDivInfo = async(divElement) =>{
     await configureUserPanel();
+    
     try{
         await auth0.checkSession();
         let authenticated = await auth0.isAuthenticated();
@@ -93,10 +96,11 @@ window.addEventListener("load",async () => {
 const configureUserPanel = async () => {
     
     let fileData = await fetch("./auth.json");
+    
     let data = await fileData.json();
     auth0 = await createAuth0Client({
         domain: data.domain,
         client_id: data.client_id,
-        cacheLocation: "localstorage"
+	cacheLocation: "localstorage"
     });
 }

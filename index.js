@@ -115,7 +115,7 @@ app.post("/search",(req,res)=>{
                         }
                 }
                 
-                collection.find(
+                /*collection.find(
                         query,
                         {
                     projection: {
@@ -152,7 +152,66 @@ app.post("/search",(req,res)=>{
                         res.send("No se encontraron coincidencias");
                     }
 
+                });*/
+                let cursor = collection.aggregate([
+                    {$match:query},
+                    {$project: {
+                        _id:0,
+                        id:1,
+                        original_title:1,
+                        popularity:1,
+                        poster_path:1,
+                        runtime:1,
+                        belongs_to_collection:1,
+                        col_poster_path:{$cond:{
+                            if:{"$ne":["$belongs_to_collection",""]},
+                            then:{
+                                $arrayElemAt:["$belongs_to_collection",0]
+                            },
+                            else:""
+                        }}
+                        /*belongs_parsed:{
+                            $function : {
+                                body: `function(jsonString){
+                                    return JSON.parse(jsonString)
+                                }`,
+                                args:["$belongs_to_collection"],
+                                lang:"js"
+                            }
+                        }*/
+                    }},
+                    {$limit : itemsPerTable}
+                ]);
+                let cadena = "<table><tr><th>ID</th><th>Poster</th><th>Título</th><th>Popularidad</th><th>Duracion</th></tr>";
+                let found_at_least_one = false;
+                cursor.forEach((row) => {
+                    console.log(row);
+                    if(!found_at_least_one)found_at_least_one = true;
+                    let fila = "<tr>";
+                    fila += "<td>"+row.id+"</td>";
+                    let src = row.poster_path;
+		            if(row.col_poster_path != "" && row.col_poster_path.poster_path)
+                        src = row.col_poster_path.poster_path;
+                    fila += "<td><img src = 'https://image.tmdb.org/t/p/original"+src+"'"+
+                            " width=50 height=50 alt = 'Poster' onerror='this.src = \"https://image.freepik.com/free-icon/interrogation-mark-circle_318-9651.jpg\"'></td>";
+                    fila += "<td>"+row.original_title+"</td>";
+                    fila += "<td>"+row.popularity+"</td>";
+                    fila += "<td>"+row.runtime+"</td>";
+                    fila += "</tr>";
+                    cadena += fila;
+                }, (err) =>{ //done
+                    if(err){
+                        res.send("No se pudieron obtener los datos");
+                        console.log(err);
+                    }else{
+                        if(found_at_least_one){
+                            cadena += "</table>";
+                            res.send(cadena);
+                        }else res.send("No se encontraron coincidencias");
+                    }
+
                 });
+                
             }
         )
     }catch(e){
@@ -161,9 +220,50 @@ app.post("/search",(req,res)=>{
 
 });
 
+const parseHelper = (item,head,resultRow,row,colIdx) => {
+	// Converting to JSON format second degree subdocuments
+	try{
+	if(!item || item.trim() === ""){
+		return "";
+	}
+	        let vari = item.replaceAll("'","\""); //A common char not allowed on json.parse()
+        	vari = vari.replaceAll("None","\"\""); //Initial format includes a "None" keyword
+	        // So it will be replaced for an empty string
+        	let parsed = JSON.parse(vari);
+	        return parsed;
+	}catch(e){
+		return "Error"; //It will be solved on later versions
+	}
+}
 app.listen(port, ()=>{
     console.log("Server listening\nReading .csv data");
-    csvtojson()
+    csvtojson({
+        colParser:{
+            "genres":function(item,head,resultRow,row,colIdx){
+			return parseHelper(item,head,resultRow,row,colIdx)
+	        },
+            "belongs_to_collection":function(item,head,resultRow,row,colIdx){
+			return parseHelper(item,head,resultRow,row,colIdx)
+	        },
+            "production_companies":function(item,head,resultRow,row,colIdx){
+			return parseHelper(item,head,resultRow,row,colIdx)
+	        },
+            "production_countries":function(item,head,resultRow,row,colIdx){
+			return parseHelper(item,head,resultRow,row,colIdx)
+	        },
+            "spoken_languages":function(item,head,resultRow,row,colIdx){
+			return parseHelper(item,head,resultRow,row,colIdx)
+	        },
+            "Keywords":function(item,head,resultRow,row,colIdx){
+			return parseHelper(item,head,resultRow,row,colIdx)
+	        },
+	        "crew":function(item,head,resultRow,row,colIdx){
+            return parseHelper(item,head,resultRow,row,colIdx)
+            },
+	        "cast":function(item,head,resultRow,row,colIdx){
+			return parseHelper(item,head,resultRow,row,colIdx)
+	        }
+    }})
    .fromFile("data/test.csv")
    .then(csvData => {
        mongodb.connect(
