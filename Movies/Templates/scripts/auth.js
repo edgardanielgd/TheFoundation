@@ -47,11 +47,13 @@ window.addEventListener("load",async () => {
 },false);
 
 const configureFirstAuth =async () => {
+
     let fileData = await fetch("./auth.json");
-    let data = await fileData.json();
+    const config = await fileData.json();
+    
     auth0 = await createAuth0Client({
-        domain: data.domain,
-        client_id: data.client_id,
+        domain: config.domain,
+        client_id: config.client_id,
         cacheLocation: "localstorage"
     });
 }

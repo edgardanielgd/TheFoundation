@@ -3,17 +3,20 @@ const app = express();
 const formidable = require("express-formidable");
 const {join} =require("path");
 const config = require("./Core/configure-app.js");
-require("dotenv").config();
-const port = process.env.PORT || 3000;
+
+const ConfigEnv = require("./config/configBack");
 
 const dbname = "BoxOffice";
 const collectionName = "Data";
 const mongodb = require("mongodb").MongoClient;
 
+const User = encodeURIComponent(ConfigEnv.DB_USER);
+const Password = encodeURIComponent(ConfigEnv.DB_PASSWORD);
+const port = ConfigEnv.PORT;
+
 var url = "";
-if(process.env.db_user && process.env.db_password){
-    url = "mongodb+srv://"+process.env.db_user+":"+process.env.db_password+
-    "@cluster0.rnfi9.mongodb.net/"+dbname+"?retryWrites=true&w=majority";
+if(User && Password){
+    url = "mongodb+srv://"+User+":"+Password+"@cluster0.rnfi9.mongodb.net/"+dbname+"?retryWrites=true&w=majority";
 }else{
     url = "mongodb://localhost:27017";
 }
@@ -48,7 +51,9 @@ app.get("/menu",(_,res)=>{
 app.get("/login",(_,res) => {
     res.sendFile(join(__dirname,"Movies/Templates/login.html"));
 });
-
+app.get("/",(_,res)=>{
+    res.sendFile(join(__dirname,"Movies/Templates/index.html"))
+});
 
 app.listen(port , ()=>{
     console.log("Server listening\nReading .csv data");
@@ -61,7 +66,5 @@ app.listen(port , ()=>{
        });
 });
 
-app.get("/",(_,res)=>{
-    res.sendFile(join(__dirname,"Movies/Templates/index.html"))
-});
+
 
