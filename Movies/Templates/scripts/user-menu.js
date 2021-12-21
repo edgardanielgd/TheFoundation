@@ -1,4 +1,16 @@
 ﻿var auth0 = null;
+
+let profile_info_fields = {
+    given_name : "Nombres",
+    family_name : "Apellidos",
+    nickname: "Apodo",
+    name:"Nombre Completo",
+    picture: "Imagen",
+    locale: "Idioma",
+    updated_at:"Última actualización",
+    email:"e-mail",
+    email_verified:"¿Email verificado?"
+}
 const logout = async () => {
     if(auth0){
         await auth0.logout({
@@ -101,23 +113,37 @@ const getUserInfo = async (user,divElement,ul) => {
                         let divContain = document.createElement("div");
                         divContain.className = "container";
                             for(i in user){
-                                let row = document.createElement("div");
-                                row.className = "row mr-auto";
-                                    let colKey = document.createElement("div");
-                                    colKey.className = "col";
-                                    colKey.textContent = i;
-                                    row.appendChild(colKey);
+                                if(profile_info_fields[i]){
+                                    let row = document.createElement("div");
+                                    row.className = "row mr-auto";
+                                        let colKey = document.createElement("div");
+                                        colKey.className = "col";
+                                        colKey.textContent = profile_info_fields[i];
+                                        row.appendChild(colKey);
 
-                                    let colValue = document.createElement("div");
-                                    colValue.className = "col";
-                                        let p = document.createElement("p");
-                                        p.className = "text-justify";
-                                        p.textContent = user[i] || "N/A";
-                                        colValue.appendChild(p);
-                                        
-                                    row.appendChild(colValue);
+                                        let colValue = document.createElement("div");
+                                        colValue.className = "col";
+                                            if(i == "picture"){
+                                                let imgPic = document.createElement("img");
+                                                imgPic.className = "img-fluid";
+                                                //imgPic.id = "profile_info_picture";
+                                                imgPic.alt = "User profile picture";
+                                                imgPic.src = user[i];
+                                                imgPic.onerror = () => {
+                                                    imgPic.src="http://cdn.onlinewebfonts.com/svg/img_76927.png";
+                                                }
+                                                colValue.appendChild(imgPic);
+                                            }else{
+                                                let p = document.createElement("p");
+                                                p.className = "text-justify";
+                                                p.textContent = user[i] || "N/A";
+                                                colValue.appendChild(p);
+                                            }
+                                            
+                                        row.appendChild(colValue);
 
-                                divContain.appendChild(row);
+                                    divContain.appendChild(row);
+                                }
                             }
                             
                         divBody.appendChild(divContain);

@@ -4,6 +4,9 @@
 #user_picture {
     width: 50px;
 }
+#profile_info_picture{
+    width: 50px;
+}
 body {
     background-color:white;
 }
