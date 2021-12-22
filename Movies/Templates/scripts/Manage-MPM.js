@@ -1,33 +1,34 @@
+// Manage-MPM = Manage-Most-Popular-Movies
 (function (window,undefined) {
-    const maxCards = 20;
+    const cardsPerItem = 3;
+    const maxCards = 12;
+
     let renames_data = {
-        id : "Id",
         poster_path : "Poster",
-        original_title : "Título original",
-        revenue : "Ganancia",
-        popularity : "Popularidad",
-        runtime : "Duración",
-        title: "Título"
+        title : "Título"
     }
-    let genTable = (data) => {
-        
-        let displayDiv = document.getElementById("result");
+
+    let genCarousel = (data) => {
+        let displayDiv = document.getElementById("divMPM");
         displayDiv.innerHTML = "";
 
+        let itemsCount = 0;
         if(data.error){
             Utilities.showErrorMessage(displayDiv,data.error);
             return;
         }
-        
         if(data.data){
             //Array of documents
             if(data.data.length > 0){
 
                 let dbData = data.data;
-                
+                let row = document.createElement("div");
+                row.className = "row carousel-item active"; //First item is the one active
+                displayDiv.appendChild(row);
+
                 for(let key in dbData){
                     let col = document.createElement("div");
-                    col.className = "col-lg-4 col-md-6 col-sm-12 mt-lg-2 mt-sm-1"
+                    col.className = "col-lg-4 col-md-6 col-sm-12 carouselCustom";
 
                     let card = document.createElement("div");
                     card.className = 
@@ -58,7 +59,6 @@
                                 let cTitle = document.createElement("h5");
                                 cTitle.className = "card-title";
                                 cTitle.textContent = value;
-                                //cBody.insertBefore(cTitle,cBody.firstChild);
                                 cBody.appendChild(cTitle);
                                 //Always title on top
                             }else{
@@ -85,8 +85,16 @@
                     cBody.appendChild(cBodyGrid);
                     card.appendChild(cBody);
                     col.appendChild(card);
-                    displayDiv.appendChild(col);
-                    
+
+                    if(itemsCount % cardsPerItem == 0){ //A new item for carousel
+                        if(itemsCount !== 0){
+                            row = document.createElement("div");
+                            row.className = "row carousel-item";
+                            displayDiv.appendChild(row);
+                        }
+                    }
+                    row.appendChild(col);
+                    itemsCount += 1;
                 }
 
             }else{
@@ -99,28 +107,19 @@
         }
     }
     window.addEventListener("load", async () => {
-        let form = document.getElementById("frmBusqueda");
         
-        form.addEventListener("submit",function(event){
-            event.preventDefault();
-            
-            let Data = new FormData(form);
-            Data.append("MaxItems",maxCards);
+        let xhr = new XMLHttpRequest();
 
-            let xhr = new XMLHttpRequest();
+        let data = new FormData();
+        data.append("MaxItems",maxCards);
 
-            xhr.onload = function(){
-                
-                    genTable(JSON.parse(xhr.response));
-                
-            }
+        xhr.onload = function(){
+            genCarousel(JSON.parse(xhr.response));       
+        }
 
-            xhr.open("POST","http://localhost:3000/search");
+        xhr.open("POST","http://localhost:3000/popularQuery");
 
-            xhr.send( Data );
-        });
+        xhr.send(data);
 
     });
-})(window);
-
-
+})(window)

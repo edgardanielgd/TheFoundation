@@ -22,9 +22,6 @@ if(User && Password){
 }
 const file = join(__dirname,"data/test.csv");
 
-
-const itemsPerTable = 20;
-
 app.use(express.json());
 app.use(express.urlencoded({
     extended:true

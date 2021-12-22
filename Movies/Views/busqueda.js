@@ -1,5 +1,5 @@
 const searchPath = "/search";
-const itemsPerTable = 20;
+
 class Buscador{
     constructor(app,mongoclient,dbname,collectionName){
         this.app = app;
@@ -11,12 +11,18 @@ class Buscador{
     configurarServidor = () => {
         this.app.post(searchPath,(req,res) => {
             let reqData = req.fields;
+            let MaxItems = 20;
             if(!reqData || !reqData.Tipo){
                 res.send({
                     error: "Imposible encontrar datos de formulario correctos"
                 });
                 return;
             }
+            try{
+                if(reqData.MaxItems){
+                    MaxItems = parseInt(reqData.MaxItems);
+                }
+            }catch(e){};
             let query = {}
             let db = this.mongoclient.db(this.dbname);
             let collection = db.collection(this.collectionName);
@@ -46,7 +52,7 @@ class Buscador{
                     break;
                     }
                 case "3":{
-                    if(!reqData.Min || !reqData.Max || parseDouble(reqData.Min) >= parseDouble(reqData.Max)){
+                    if(!reqData.Min || !reqData.Max || parseFloat(reqData.Min) >= parseFloat(reqData.Max)){
                         res.send({
                             error: "Formulario inválido"
                         });
@@ -58,12 +64,12 @@ class Buscador{
                             {"$expr":
                                 {"$gte" : [
                                     {"$convert" : {input:"$popularity", to: "decimal"}},
-                                    parseDouble(reqData.Min)
+                                    parseFloat(reqData.Min)
                                 ]}},
                             {"$expr":
                                 {"$lte" : [
                                     {"$convert" : {input:"$popularity", to: "decimal"}},
-                                    parseDouble(reqData.Max)
+                                    parseFloat(reqData.Max)
                                     ]}}
                                 
                                 ]
@@ -71,7 +77,7 @@ class Buscador{
                     break;
                     }
                 case "4":{
-                    if(!reqData.Min || !reqData.Max || parseDouble(reqData.Min) >= parseDouble(reqData.Max)){
+                    if(!reqData.Min || !reqData.Max || parseFloat(reqData.Min) >= parseFloat(reqData.Max)){
                         res.send({
                             error: "Formulario inválido"
                         });
@@ -83,12 +89,12 @@ class Buscador{
                         {"$expr":
                            {"$gte" : [
                                {"$convert" : {input:"$runtime", to: "decimal"}},
-                                    parseDouble(reqData.Min)
+                                    parseFloat(reqData.Min)
                             ]}},
                         {"$expr":
                             {"$lte" : [
                                 {"$convert" : {input:"$runtime", to: "decimal"}},
-                                parseDouble(reqData.Max)
+                                parseFloat(reqData.Max)
                             ]}}
                         ]
                     };
@@ -111,6 +117,7 @@ class Buscador{
                         popularity:1,
                         runtime:1,
                         belongs_to_collection:1,
+                        title:1,
                         col_poster_path:{$cond:{
                             if:{
                                 "$and":[
@@ -130,12 +137,11 @@ class Buscador{
                             else:""
                         }}
                     }},
-                    {$limit : itemsPerTable}
+                    {$limit : MaxItems}
                 ]);
                 let arr = [];
                 let found_at_least_one = false;
                 cursor.forEach((row) => {
-                    console.log(row);
                     if(!found_at_least_one)found_at_least_one = true;
                     arr.push(row);
                 }, (err) =>{ //done

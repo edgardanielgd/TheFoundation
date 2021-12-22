@@ -1,0 +1,36 @@
+body{
+    background-color:rgb(59, 50, 50);
+    background-image:url("https://besthqwallpapers.com/Uploads/4-5-2020/131705/thumb2-gray-abstraction-background-gray-background-with-gold-lines-black-background-luxury-backgrounds.jpg");
+    background-repeat:no-repeat;
+    background-size:cover;
+}
+#main-container{
+    color:antiquewhite;
+}
+.frmSubType{
+    background-color:rgba(11, 40, 167, 0.281);
+    border-radius:5px 0px 0px 5px;
+}
+.frmSubData{
+    background-color: rgba(47, 67, 245, 0.548);
+    border-radius:0px 5px 5px 0px;
+}
+.customCardStyle{
+    background-color:rgb(21, 85, 76);
+    color:black;
+    border-radius:10px;
+}
+.customCardStyle img {
+    width: 300px;
+    height: 300px;
+    border-radius:10px;
+}
+.customCardBodyStyle{
+    background-color:rgb(2, 15, 14);
+    color:white;
+    border-radius:10px;
+}
+.carouselCustom {
+    display: inline-block;
+    margin-left:-4px;
+}
