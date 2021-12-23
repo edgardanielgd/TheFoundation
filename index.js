@@ -2,9 +2,11 @@
 const app = express();
 const formidable = require("express-formidable");
 const {join} =require("path");
-const config = require("./Core/configure-app.js");
-
+const config = require("./Core/configure-app");
 const ConfigEnv = require("./config/configBack");
+const { logErrors, errorHandler } = require("./middlewares/error.handler");
+const { allowOrigins} = require("./middlewares/origins.handler");
+
 
 const dbname = "BoxOffice";
 const collectionName = "Data";
@@ -30,14 +32,6 @@ app.use(express.urlencoded({
 
 app.use(formidable());
 
-app.use((req,res,next) => {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
-        res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-        res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
-        next();
-});
-
 app.use(express.static(__dirname));
 app.use(express.static(join(__dirname,"Movies/Templates")));
 
@@ -62,6 +56,11 @@ app.listen(port , ()=>{
             config.configurar(app,client,file,dbname,collectionName);
        });
 });
+
+app.use(logErrors);
+app.use(errorHandler);
+app.use(allowOrigins);
+
 
 
 

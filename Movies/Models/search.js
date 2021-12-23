@@ -9,7 +9,17 @@ class Buscador{
         this.configurarServidor();
     }
     configurarServidor = () => {
-        this.app.post(searchPath,(req,res) => {
+        let search = this.search;
+        this.app.post(searchPath,(req,res,next) => {
+            try{
+                search(req,res);
+            }catch(e){
+                next(e);
+            }
+        });
+    }
+    
+    search = (req,res) => {
             let reqData = req.fields;
             let MaxItems = 20;
             if(!reqData || !reqData.Tipo){
@@ -19,9 +29,8 @@ class Buscador{
                 return;
             }
             try{
-                if(reqData.MaxItems){
+                if(reqData.MaxItems)
                     MaxItems = parseInt(reqData.MaxItems);
-                }
             }catch(e){};
             let query = {}
             let db = this.mongoclient.db(this.dbname);
@@ -118,6 +127,7 @@ class Buscador{
                         runtime:1,
                         belongs_to_collection:1,
                         title:1,
+                        genres:1,
                         col_poster_path:{$cond:{
                             if:{
                                 "$and":[
@@ -163,10 +173,9 @@ class Buscador{
                     }
 
                 });
-                
-            })
-        };
+
     }
+}
 exports.configurar = (app,mongoclient,dbname,collectionName) => {
     let lector = new Buscador(app,mongoclient,dbname,collectionName);
 }

@@ -27,9 +27,38 @@
 
         return auth0;
     }
+    badges_styles = [
+            "badge-primary",
+            "badge-secondary",
+            "badge-success",
+            "badge-danger",
+            "badge-warning",
+            "badge-info",
+            "badge-light",
+            "badge-dark",
+        ]
+    class GenresNBadges{
+        constructor(){
+            this.cursor = 0;
+            this.genresStyles = {};
+        }
+        getGenre = (genreName) => {
+            if( !this.genresStyles[genreName] ){
+                if(badges_styles.length == this.cursor){
+                    //Repeat styles again
+                    this.cursor = 0;
+                }
+                this.genresStyles[genreName] = badges_styles[this.cursor++];
+            }
+            return this.genresStyles[genreName];
+        }
+        
+    }
+    
     window.Utilities = {
         DisplayCorrectImage : DisplayCorrectImage,
         showErrorMessage : showErrorMessage,
-        configureAuth : configureAuth
+        configureAuth : configureAuth,
+        genresManager : GenresNBadges
     }
 })(window)

@@ -9,8 +9,18 @@ class Buscador{
         this.configurarServidor();
     }
     configurarServidor = () => {
+        let searchMPM = this.searchMPM;
         this.app.post(searchMPMPath,(req,res) => {
-            let reqData = req.fields;
+            try{
+                searchMPM(req,res);
+            }catch(e){
+                next(e);
+            }
+        });
+    }
+
+    searchMPM = (req,res) => {
+        let reqData = req.fields;
             let MaxItems = 12;
             try{
                 if(reqData.MaxItems){
@@ -78,7 +88,6 @@ class Buscador{
 
                 });
         }
-    )};
 }
 exports.configurar = (app,mongoclient,dbname,collectionName) => {
     let lector = new Buscador(app,mongoclient,dbname,collectionName);

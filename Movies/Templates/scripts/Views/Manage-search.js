@@ -1,5 +1,5 @@
 (function (window,undefined) {
-    const maxCards = 20;
+    const maxCards = 50;
     let renames_data = {
         id : "Id",
         poster_path : "Poster",
@@ -7,8 +7,10 @@
         revenue : "Ganancia",
         popularity : "Popularidad",
         runtime : "Duración",
-        title: "Título"
+        title: "Título",
+        genres: "Géneros"
     }
+    
     let genTable = (data) => {
         
         let displayDiv = document.getElementById("result");
@@ -19,6 +21,8 @@
             return;
         }
         
+        let genresManager = new Utilities.genresManager();
+
         if(data.data){
             //Array of documents
             if(data.data.length > 0){
@@ -30,12 +34,14 @@
                     col.className = "col-lg-4 col-md-6 col-sm-12 mt-lg-2 mt-sm-1"
 
                     let card = document.createElement("div");
-                    card.className = 
-                    "card customCardStyle align-items-center";
+                    card.className = "card customCardStyle align-items-center";
                     //Displaying 3 columns on large screens, 2 on medium and 1 on small screens
                     
                     let cBody = document.createElement("div");
                     cBody.className = "card-body customCardBodyStyle";
+                    
+                    let cFooter = document.createElement("div");
+                    cFooter.className = "card-footer";
 
                     let cBodyGrid = document.createElement("div");
                     cBodyGrid.className = "container";
@@ -58,9 +64,20 @@
                                 let cTitle = document.createElement("h5");
                                 cTitle.className = "card-title";
                                 cTitle.textContent = value;
-                                //cBody.insertBefore(cTitle,cBody.firstChild);
                                 cBody.appendChild(cTitle);
                                 //Always title on top
+                            }else if(subkey == "genres"){
+                                let genres = datarow.genres;
+                                if(genres){
+                                    for(i in genres){
+                                        //Appending all genres with a beautiful style and colors notation
+                                        let genre = genres[i];
+                                        let span = document.createElement("span");
+                                        span.className = "badge " + genresManager.getGenre(genre.name);
+                                        span.textContent = genre.name;
+                                        cFooter.appendChild(span);
+                                    }
+                                }
                             }else{
                                 let cRow = document.createElement("div");
                                 cRow.className = "row";
@@ -84,6 +101,7 @@
                     }
                     cBody.appendChild(cBodyGrid);
                     card.appendChild(cBody);
+                    card.appendChild(cFooter);
                     col.appendChild(card);
                     displayDiv.appendChild(col);
                     
