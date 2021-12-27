@@ -1,16 +1,18 @@
 const searchPath = "/search";
 
 class Buscador{
-    constructor(app,mongoclient,dbname,collectionName){
+    constructor(app,mongoclient,dbname,collectionName,checkJwt){
         this.app = app;
         this.mongoclient = mongoclient;
         this.dbname = dbname;
         this.collectionName = collectionName;
-        this.configurarServidor();
+        
+        this.configurarServidor(checkJwt);
     }
-    configurarServidor = () => {
+    configurarServidor = (checkJwt) => {
         let search = this.search;
-        this.app.post(searchPath,(req,res,next) => {
+        
+        this.app.post(searchPath,checkJwt,(req,res,next) => {
             try{
                 search(req,res);
             }catch(e){
@@ -176,6 +178,6 @@ class Buscador{
 
     }
 }
-exports.configurar = (app,mongoclient,dbname,collectionName) => {
-    let lector = new Buscador(app,mongoclient,dbname,collectionName);
+exports.configurar = (app,mongoclient,dbname,collectionName,checkJwt) => {
+    let lector = new Buscador(app,mongoclient,dbname,collectionName,checkJwt);
 }

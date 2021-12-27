@@ -246,12 +246,16 @@
             divCollapse.appendChild(ul);
             
         try{
+            document.cookie = "access_token = ''"; //Reseting cookie trick value
             await auth0.checkSession();
             let authenticated = await auth0.isAuthenticated();
             if(!authenticated){
                 await getDefaultLogin(divCollapse);
             }else{
                 let user = await auth0.getUser();
+                let token = await auth0.getTokenSilently();
+                //Setting a cookie will allow server to identify and get user's authentication state
+                document.cookie = "access_token = " + token;
                 await getUserInfo(user,divCollapse,ul);
                 //ul for adding more options on menu
             }

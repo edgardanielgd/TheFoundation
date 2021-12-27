@@ -3,10 +3,14 @@ function logErrors (err, req, res, next){
     next(err);
 }
 function errorHandler (err, req, res, next){
-    res.status(500).send({
-        message: err.message,
-        stack: err.stack
-    })
+    if(err.status == 401){
+        res.status(401).redirect("/");//Redirects to main on auth error
+    }else{
+        res.send({
+            message: err.message,
+            stack: err.stack
+        })
+    }
 }
 
 module.exports = { logErrors, errorHandler }

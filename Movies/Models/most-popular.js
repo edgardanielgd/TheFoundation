@@ -1,16 +1,17 @@
 const searchMPMPath = "/popularQuery";
 
-class Buscador{
-    constructor(app,mongoclient,dbname,collectionName){
+class BuscadorMPM{
+    constructor(app,mongoclient,dbname,collectionName,checkJwt){
         this.app = app;
         this.mongoclient = mongoclient;
         this.dbname = dbname;
         this.collectionName = collectionName;
-        this.configurarServidor();
+        this.configurarServidor(checkJwt);
     }
-    configurarServidor = () => {
+    configurarServidor = (checkJwt) => {
         let searchMPM = this.searchMPM;
-        this.app.post(searchMPMPath,(req,res) => {
+        
+        this.app.post(searchMPMPath,checkJwt,(req,res) => {
             try{
                 searchMPM(req,res);
             }catch(e){
@@ -89,6 +90,6 @@ class Buscador{
                 });
         }
 }
-exports.configurar = (app,mongoclient,dbname,collectionName) => {
-    let lector = new Buscador(app,mongoclient,dbname,collectionName);
+exports.configurar = (app,mongoclient,dbname,collectionName,checkJwt) => {
+    let lector = new BuscadorMPM(app,mongoclient,dbname,collectionName,checkJwt);
 }

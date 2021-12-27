@@ -18,13 +18,12 @@
 
         let fileData = await fetch("./auth.json");
         let config = await fileData.json();
-        
         let auth0 = await createAuth0Client({
             domain: config.domain,
             client_id: config.client_id,
+            audience: config.audience,
             cacheLocation: "localstorage"
         });
-
         return auth0;
     }
     badges_styles = [
