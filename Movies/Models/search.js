@@ -6,9 +6,9 @@ class Buscador{
         this.mongoclient = mongoclient;
         this.dbname = dbname;
         this.collectionName = collectionName;
-        
         this.configurarServidor(checkJwt);
     }
+
     configurarServidor = (checkJwt) => {
         let search = this.search;
         
@@ -30,13 +30,16 @@ class Buscador{
                 });
                 return;
             }
+
             try{
                 if(reqData.MaxItems)
                     MaxItems = parseInt(reqData.MaxItems);
             }catch(e){};
+
             let query = {}
             let db = this.mongoclient.db(this.dbname);
             let collection = db.collection(this.collectionName);
+
             switch(reqData.Tipo){
                 case "1":{
                     if(!reqData.Valor){
@@ -111,6 +114,69 @@ class Buscador{
                     };
                     break;
                 }
+                case "5":{
+                    if(!reqData.Valor){
+                        res.send({
+                            error: "Formulario inválido"
+                        });
+                        return;
+                    }
+                    query = {
+                        title:{"$regex":".*"+reqData.Valor+".*","$options":"i"}
+                    }
+                    break;
+                }
+                case "6":{
+                    if(!reqData.Valor){
+                        res.send({
+                            error: "Formulario inválido"
+                        });
+                        return;
+                    }
+                    query = {
+                        "genres":{
+                            "$elemMatch":{
+                                name:{"$regex":".*"+reqData.Valor+".*","$options":"i"}
+                            }
+                        }
+                    }
+                    break;
+                }
+                case "7":{
+                    if(!reqData.Valor){
+                        res.send({
+                            error: "Formulario inválido"
+                        });
+                        return;
+                    }
+                    query = {
+                        "Keywords":{
+                            "$elemMatch":{
+                                name:{"$regex":".*"+reqData.Valor+".*","$options":"i"}
+                            }
+                        }
+                    }
+                    break;
+                }
+                case "8":{
+                    if(!reqData.Valor){
+                        res.send({
+                            error: "Formulario inválido"
+                        });
+                        return;
+                    }
+                    query = {
+                        "spoken_languages":{
+                            "$elemMatch":{
+                                "$or":[
+                                    {name: {"$regex":".*"+reqData.Valor+".*","$options":"i"}},
+                                    {iso_639_1: {"$regex":".*"+reqData.Valor+".*","$options":"i"}}
+                                ]
+                            }
+                        }
+                    }
+                    break;
+                }
                 default:{
                     res.send({
                         error: "Formulario inválido"
@@ -118,6 +184,7 @@ class Buscador{
                     return;
                     }
                 }
+
                 let cursor = collection.aggregate([
                     {$match:query},
                     {$project: {
