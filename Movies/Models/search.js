@@ -197,6 +197,7 @@ class Buscador{
                         belongs_to_collection:1,
                         title:1,
                         genres:1,
+                        overview:1,
                         col_poster_path:{$cond:{
                             if:{
                                 "$and":[

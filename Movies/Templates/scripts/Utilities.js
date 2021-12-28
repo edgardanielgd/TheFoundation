@@ -15,7 +15,6 @@
     }
 
     const configureAuth = async () => {
-
         let fileData = await fetch("./auth.json");
         let config = await fileData.json();
         let auth0 = await createAuth0Client({
@@ -24,7 +23,15 @@
             audience: config.audience,
             cacheLocation: "localstorage"
         });
+        auth0["roles_domain"] = config.roles_domain;
         return auth0;
+    }
+    const getRoles = async (authClient) => {
+        let claims = await authClient.getIdTokenClaims();
+        let roles = claims[authClient.roles_domain];
+        if(roles)
+            return roles;
+        return [];
     }
     badges_styles = [
             "badge-primary",
@@ -58,6 +65,7 @@
         DisplayCorrectImage : DisplayCorrectImage,
         showErrorMessage : showErrorMessage,
         configureAuth : configureAuth,
-        genresManager : GenresNBadges
+        genresManager : GenresNBadges,
+        getRoles : getRoles
     }
 })(window)

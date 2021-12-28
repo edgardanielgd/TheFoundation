@@ -20,7 +20,7 @@
         }
     }
 
-    const getUserInfo = async (user,divElement,ul) => {
+    const getUserInfo = async (user,divElement,ul,roles) => {
         if(user){
             //Adding components to menú
             let menuli = document.createElement("li");
@@ -34,6 +34,18 @@
 
                 ul.appendChild(menuli);
             
+            if(roles.includes("Administrator")){
+                //Append special menu options for admins
+                let statsli = document.createElement("li");
+                statsli.className = "nav-item";
+                    let aStats = document.createElement("a");
+                    aStats.className = "nav-link";
+                    aStats.href = "#";
+                    aStats.textContent = "Estadísticas";
+                    statsli.appendChild(aStats);
+
+                    ul.appendChild(statsli);
+            }
             let authSection = document.createElement("div");
             authSection.className = "ml-auto";
 
@@ -254,12 +266,14 @@
             }else{
                 let user = await auth0.getUser();
                 let token = await auth0.getTokenSilently();
+                let roles = await Utilities.getRoles(auth0);
                 //Setting a cookie will allow server to identify and get user's authentication state
                 document.cookie = "access_token = " + token;
-                await getUserInfo(user,divCollapse,ul);
+                await getUserInfo(user,divCollapse,ul,roles);
                 //ul for adding more options on menu
             }
         }catch(e){
+                console.log(e);
                 await getDefaultLogin(divCollapse);
         }
 
@@ -284,5 +298,40 @@
             document.body.insertBefore(menu,document.body.firstChild);
         }
     },false);
+
+    async function getRoles(token,userId){
+        
+        /*let xhr = new XMLHttpRequest();
+
+        xhr.open("GET","https://dev-kftlzjxq.us.auth0.com/api/v2/users/"+userId+"/permissions");
+
+        
+        xhr.setRequestHeader("Authorization","Bearer "+token);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader("Audience","https://TheFoundation.com/api");
+        xhr.setRequestHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        
+
+        xhr.onload = function(){
+            alert(xhr.responseText);
+        }
+        xhr.onerror = function(){
+            alert(xhr.response);
+        }
+
+        
+        xhr.send();*/
+
+        const response = 
+            await fetch("https://dev-kftlzjxq.us.auth0.com/api/v2/users/"+userId+"/roles",{
+                "method":"GET",
+                "mode": "no-cors",
+                "headers":{
+                    "Authorization":"Bearer "+token,
+                    'Access-Control-Allow-Origin': 'http://localhost:3000'
+                }
+            });
+            alert(response);
+    }    
 
 })(window);

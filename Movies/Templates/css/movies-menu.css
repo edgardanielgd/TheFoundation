@@ -20,6 +20,9 @@ body{
     color:black;
     border-radius:10px;
 }
+.customCardStyle:hover{
+    background-color:rgb(73, 153, 142);
+}
 .customCardStyle img {
     width: 300px;
     height: 300px;

@@ -8,7 +8,8 @@
         popularity : "Popularidad",
         runtime : "Duración",
         title: "Título",
-        genres: "Géneros"
+        genres: "Géneros",
+        overview: "Resumen"
     }
     
     let genTable = (data) => {
@@ -78,6 +79,12 @@
                                         cFooter.appendChild(span);
                                     }
                                 }
+                            }else if(subkey == "overview"){
+                                let overview = datarow.overview;
+                                card.setAttribute("data-toggle","tooltip");
+                                card.setAttribute("title",
+                                    overview
+                                );
                             }else{
                                 let cRow = document.createElement("div");
                                 cRow.className = "row";
@@ -106,6 +113,10 @@
                     displayDiv.appendChild(col);
                     
                 }
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'))
+                    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl)
+                    }); //Enables custom tooltips
 
             }else{
                 Utilities.showErrorMessage(displayDiv,"No se encontraron coincidencias");
