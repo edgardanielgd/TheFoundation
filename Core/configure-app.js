@@ -1,6 +1,6 @@
-const lecturaInicial = require("../Movies/Models/read-data.js");
-const buscador = require("../Movies/Models/search.js");
-const busquedaMPM = require("../Movies/Models/most-popular");
+const lecturaInicial = require("../Movies/Routes/read-data.js");
+const buscador = require("../Movies/Routes/search.js");
+const busquedaMPM = require("../Movies/Routes/most-popular");
 class Configuracion{
     constructor(app,mongoclient,file,dbname,collectionName,checkJwt){
         lecturaInicial.configurar(app,mongoclient,file,dbname,collectionName);

@@ -1,4 +1,7 @@
 const csvtojson = require("csvtojson");
+
+const MoviesService = require("../services/MoviesService");
+
 class Lector{
     constructor(app,mongoclient,file,dbname,collectionName){
         this.app = app;
@@ -6,6 +9,7 @@ class Lector{
         this.file = file;
         this.dbname = dbname;
         this.collectionName = collectionName;
+        this.service = new MoviesService(this.mongoclient, this.dbname, this.collectionName);
     }
     
     parseHelper = (item,head,resultRow,row,colIdx) => {
@@ -43,6 +47,7 @@ class Lector{
 
     leerDatos = () => {
         let parseHelper = this.parseHelper;
+        let service = this.service;
 
         let db = this.mongoclient.db(this.dbname);
         
@@ -81,10 +86,7 @@ class Lector{
                     }})
                 .fromFile(this.file)
                 .then(csvData => {
-                            collection.insertMany(csvData, (err,resM) => {
-                                if(err) throw err;
-                                console.log("Inserted : "+resM.insertedCount+" rows");
-                            });
+                            service.insertMany(csvData);
                         }
                     )
             }else{
