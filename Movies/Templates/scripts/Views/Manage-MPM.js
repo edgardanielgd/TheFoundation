@@ -3,9 +3,19 @@
     const cardsPerItem = 3;
     const maxCards = 12;
 
-    let renames_data = {
+    const renames_data = {
         poster_path : "Poster",
-        title : "Título"
+        title : "Título",
+        popularity: "Popularidad"
+    }
+
+    const default_projection = {
+        "_id": 0,
+        "popularity": 1,
+        "title": 1,
+        "poster_path" : 1,
+        "col_poster_path": 1
+        
     }
 
     let genCarousel = (data) => {
@@ -107,19 +117,28 @@
         }
     }
     window.addEventListener("load", async () => {
+
+        let jsonRequest = {};
+
+        jsonRequest.projection = default_projection;
+        jsonRequest.sort = {
+            popularity: -1
+        };
+        jsonRequest.limit = maxCards;
         
         let xhr = new XMLHttpRequest();
-
-        let data = new FormData();
-        data.append("MaxItems",maxCards);
 
         xhr.onload = function(){
             genCarousel(JSON.parse(xhr.response));       
         }
 
-        xhr.open("POST","http://localhost:3000/popularQuery");
+        xhr.open("POST","http://localhost:3000/api_v1/movies/");
 
-        xhr.send(data);
+        xhr.setRequestHeader("Content-type","application/json; charset=utf-8");
+
+        xhr.send(
+            JSON.stringify(jsonRequest)
+        );
 
     });
 })(window)

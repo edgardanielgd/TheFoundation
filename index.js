@@ -27,13 +27,13 @@ if(User && Password){
 }
 const file = join(__dirname,"data/test.csv");
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
+app.use(express.json());
+app.use(express.urlencoded({
     extended:true
 }) 
 );
 
-app.use(formidable());
+//app.use(formidable());
 
 app.use(cookieParser());
 
@@ -52,10 +52,15 @@ app.get("/login",(_,res) => {
 app.get("/menu", checkJwt, (_,res)=>{
     //Members only
     res.sendFile(join(__dirname,"Movies/Templates/menu.html"));
+
+});
+app.get("/statistics", checkJwt, checkScopes(["read:statistics"]),(_,res)=>{
+    //Admins only
+    res.sendFile(join(__dirname,"Movies/Templates/statistics.html"));
 });
 
 app.listen(port , ()=>{
-    console.log("Server listening\nReading .csv data");
+    console.log("Server listening on localhost:3000\n");
     mongodb.connect(
        url,
        {useNewUrlParser : true, useUnifiedTopology: true},

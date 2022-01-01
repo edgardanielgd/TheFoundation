@@ -8,6 +8,7 @@
     }
 
     const showErrorMessage = (displayDiv,message) => {
+        displayDiv.innerHTML = "";
         let divAlert = document.createElement("div");
         divAlert.className = "alert alert-danger";
         divAlert.innerHTML = "<b>"+message+"</b>";

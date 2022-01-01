@@ -1,11 +1,15 @@
-const lecturaInicial = require("../Movies/Routes/read-data.js");
-const buscador = require("../Movies/Routes/search.js");
-const busquedaMPM = require("../Movies/Routes/most-popular");
+const moviesRouter = require("../Movies/Routes/MoviesManager");
+const moviesPath = "/movies";
+
 class Configuracion{
     constructor(app,mongoclient,file,dbname,collectionName,checkJwt){
-        lecturaInicial.configurar(app,mongoclient,file,dbname,collectionName);
-        buscador.configurar(app,mongoclient,dbname,collectionName,checkJwt);
-        busquedaMPM.configurar(app,mongoclient,dbname,collectionName,checkJwt);
+        const MoviesManager = moviesRouter(mongoclient,dbname,collectionName);
+        const router = require("express").Router();
+        app.use("/api_v1", router);
+        router.use( moviesPath, MoviesManager.router);
+        
+        //Reading or checking data existence
+        MoviesManager.generate(file);
     }
 }
 exports.configurar = (app,mongoclient,file,dbname,collectionName,checkJwt) => {

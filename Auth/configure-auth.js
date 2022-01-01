@@ -17,11 +17,16 @@ const jwksRsa = require('jwks-rsa');
         return req.cookies["access_token"]
       }
     });
-    var options = { customScopeKey: 'permissions'};
-    const checkScopes = jwtAuthz([ 'read:protected' ]);
+
+    const options = { 
+      customScopeKey: 'permissions',
+      failWithError: true
+    };
+    const checkScopes = (spectedScopes) => {
+      return jwtAuthz(spectedScopes, options)
+    }
     return {
       checkJwt : checkJwt,
-      options : options,
       checkScopes : checkScopes
     }
   }

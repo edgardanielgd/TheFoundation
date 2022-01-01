@@ -40,7 +40,7 @@
                 statsli.className = "nav-item";
                     let aStats = document.createElement("a");
                     aStats.className = "nav-link";
-                    aStats.href = "#";
+                    aStats.href = "http://localhost:3000/statistics";
                     aStats.textContent = "Estadísticas";
                     statsli.appendChild(aStats);
 
@@ -58,11 +58,6 @@
                     img.src="http://cdn.onlinewebfonts.com/svg/img_76927.png";
                 }
                 authSection.appendChild(img);
-
-                let li = document.createElement("li");
-                li.className = "navbar-text ml-3";
-                li.textContent =user.name + " ("+ user.nickname + ") ";
-                authSection.appendChild(li);
 
                 
                 let btnProfile = document.createElement("button");

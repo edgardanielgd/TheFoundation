@@ -1,6 +1,6 @@
 (function (window,undefined) {
     const maxCards = 50;
-    let renames_data = {
+    const renames_data = {
         id : "Id",
         poster_path : "Poster",
         original_title : "Título original",
@@ -9,8 +9,23 @@
         runtime : "Duración",
         title: "Título",
         genres: "Géneros",
-        overview: "Resumen"
+        overview: "Resumen",
+        homepage: "Página principal"
     }
+    const default_projection = {
+        "_id": 0,
+        "id" : 1,
+        "poster_path" : 1,
+        "original_title" : 1,
+        "revenue" : 1,
+        "popularity" : 1,
+        "runtime" : 1,
+        "title": 1,
+        "genres": 1,
+        "overview": 1,
+        "col_poster_path": 1,
+        "homepage":1
+    };
     
     let genTable = (data) => {
         
@@ -38,6 +53,8 @@
                     card.className = "card customCardStyle align-items-center";
                     //Displaying 3 columns on large screens, 2 on medium and 1 on small screens
                     
+                    let homeLink = null;
+
                     let cBody = document.createElement("div");
                     cBody.className = "card-body customCardBodyStyle";
                     
@@ -45,7 +62,7 @@
                     cFooter.className = "card-footer";
 
                     let cBodyGrid = document.createElement("div");
-                    cBodyGrid.className = "container";
+                    cBodyGrid.className = "container-fluid";
 
                     let datarow = dbData[key];
                     
@@ -65,7 +82,9 @@
                                 let cTitle = document.createElement("h5");
                                 cTitle.className = "card-title";
                                 cTitle.textContent = value;
-                                cBody.appendChild(cTitle);
+
+                                let first = cBody.firstChild;
+                                (first) ? first.before(cTitle) : cBody.appendChild(cTitle);
                                 //Always title on top
                             }else if(subkey == "genres"){
                                 let genres = datarow.genres;
@@ -85,18 +104,24 @@
                                 card.setAttribute("title",
                                     overview
                                 );
+                            }else if(subkey == "homepage"){
+                                homeLink = document.createElement("a");
+                                homeLink.href = datarow.homepage;
+                                homeLink.target = "_blank";
+                                homeLink.className = "btn btn-outline-light mb-2";
+                                homeLink.textContent = "Página principal";
                             }else{
                                 let cRow = document.createElement("div");
                                 cRow.className = "row";
                                     let cCol = document.createElement("div");
-                                    cCol.className = "col-5";
+                                    cCol.className = "col-7";
                                         let p = document.createElement("p");
                                         p.className = "card-text";
                                         p.innerHTML = "<b>"+renames_data[subkey]+"</b>";
                                         cCol.appendChild(p);
                                     cRow.appendChild(cCol);
                                     cCol = document.createElement("div");
-                                    cCol.className = "col-7";
+                                    cCol.className = "col-5";
                                         p = document.createElement("p");
                                         p.className = "card-text";
                                         p.textContent = value;
@@ -107,8 +132,12 @@
                         }
                     }
                     cBody.appendChild(cBodyGrid);
+
                     card.appendChild(cBody);
                     card.appendChild(cFooter);
+
+                    if(homeLink) card.appendChild(homeLink);
+
                     col.appendChild(card);
                     displayDiv.appendChild(col);
                     
@@ -119,11 +148,11 @@
                     }); //Enables custom tooltips
 
             }else{
-                Utilities.showErrorMessage(displayDiv,"No se encontraron coincidencias");
+                showError("No se encontraron coincidencias");
                 return;
             }
         }else{
-            Utilities.showErrorMessage(displayDiv,"Imposible generar los datos");
+            showError("Imposible generar los datos");
             return;
         }
     }
@@ -134,22 +163,124 @@
             event.preventDefault();
             
             let Data = new FormData(form);
-            Data.append("MaxItems",maxCards);
-
-            let xhr = new XMLHttpRequest();
-
-            xhr.onload = function(){
+            
+            let jsonRequest = genRequestJson(Data);
+            if( !jsonRequest.error ){
+                let xhr = new XMLHttpRequest();
                 
-                    genTable(JSON.parse(xhr.response));
-                
+                xhr.onload = function(){
+                    if( xhr.getResponseHeader("content-type").includes("application/json")){
+                        genTable(JSON.parse(xhr.response));
+                    }else{
+                        showError("No se obtuvo una respuesta valida");
+                    }
+                    
+                }
+
+                xhr.open("POST","http://localhost:3000/api_v1/movies/");
+
+                xhr.setRequestHeader("Content-type","application/json; charset=utf-8");
+
+                xhr.send(
+                    JSON.stringify(jsonRequest)
+                );
             }
-
-            xhr.open("POST","http://localhost:3000/search");
-
-            xhr.send( Data );
+            
         });
 
     });
+
+    genRequestJson = (frmData) => {
+        let jsonRequest = {}
+        let query = {}
+        const type = frmData.get( "Tipo" );
+        const value = frmData.get( "Valor" );
+        const min = frmData.get( "Min" );
+        const max = frmData.get( "Max" );
+        switch(type){
+            case "1":{
+                if( !value ){
+                    showError("Digite datos correctos");
+                    return;
+                }
+                query["id"] = value;
+                break;
+            }
+            case "2":{
+                if( !value ){
+                    showError("Digite datos correctos");
+                    return;
+                }
+                query["original_title"] = value;
+                break;
+            }
+            case "3":{
+                if( !min || !max ){
+                    showError("Digite datos correctos");
+                    return;
+                }
+                query["popularity_min"] = min;
+                query["popularity_max"] = max;
+                break;
+            }
+            case "4":{
+                if( !min || !max ){
+                    showError("Digite datos correctos");
+                    return;
+                }
+                query["runtime_min"] = min;
+                query["runtime_max"] = max;
+                break;
+            }
+            case "5":{
+                if( !value ){
+                    showError("Digite datos correctos");
+                    return;
+                }
+                query["title"] = value;
+                break;
+            }
+            case "6":{
+                if( !value ){
+                    showError("Digite datos correctos");
+                    return;
+                }
+                query["genreMatch"] = value;
+                break;
+            }
+            case "7":{
+                if( !value ){
+                    showError("Digite datos correctos");
+                    return;
+                }
+                query["keywordMatch"] = value;
+                break;
+            }
+            case "8":{
+                if( !value ){
+                    showError("Digite datos correctos");
+                    return;
+                }
+                query["languageMatch"] = value;
+                break;
+            }
+            default:{
+                showError("Formulario inválido");
+                return {
+                    error: true
+                };
+            }
+        }
+        jsonRequest["query"] = query;
+        jsonRequest["projection"] = default_projection;
+        jsonRequest["limit"] = maxCards;
+
+        return jsonRequest;
+    }
+    showError = (message) => {
+        let displayDiv = document.getElementById("result");
+        Utilities.showErrorMessage(displayDiv,message);
+    }
 })(window);
 
 
