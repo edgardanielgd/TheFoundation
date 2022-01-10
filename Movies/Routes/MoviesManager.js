@@ -8,8 +8,8 @@ class MoviesManager{
 
         this.router.post("/", async (req, res, next) => {
             try{
-                const { query, projection, sort, offset, limit} = req.body;
-                const response = await service.search( query, projection, sort, offset, limit);
+                const { query, projection, sort, offset, limit, group_by} = req.body;
+                const response = await service.search( query, projection, sort, offset, limit, group_by);
                 res.send( response );
             }catch(e){
                 next(e);

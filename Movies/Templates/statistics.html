@@ -9,29 +9,49 @@
         <link rel="icon" href="./Movies/Templates/assets/images/logo.png">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         
-        <link href="Movies/Templates/css/nav-menu.css" rel="stylesheet">
+        <link href="./css/nav-menu.css" rel="stylesheet">
+        <link href="./css/statistics-menu.css" rel="stylesheet">
         
-
         <script src="https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js"></script>
-        <script src="scripts/Utilities.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         
-        <script src="Movies/Templates/scripts/Views/user-menu.js"></script>
+        <script src="./scripts/Utilities.js"></script>
+        <script src="./scripts/Views/user-menu.js"></script>
+        <script src="./scripts/Views/Manage-statistics.js"></script>
         
     </head>
     <body>
-        <nav class="navbar bg-light">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link" href="#">Opción 1</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Opción 2</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Opción 3</a>
-              </li>
-            </ul>
-          </nav>
+      <div class="container-fluid" style="height: 100vh;padding: 0px 0px 0px 0px;">
+        <div class="row no-gutters h-100 mt-lg-6 mt-md-4 mt-sm-2 mt-xs-0">
+          <div class = "col-md-2 col-sm-12">
+            <div class="list-group" id="list-tab" role="tablist">
+              <a class="list-group-item list-group-item-action list-group-item-dark active" id="list-genre-list" data-toggle="list" href="#Genres" role="tab" aria-controls="genres">Géneros</a>
+              <a class="list-group-item list-group-item-action list-group-item-dark" id="list-companies-list" data-toggle="list" href="#Companies" role="tab" aria-controls="actors">Compañías productoras</a>
+              <a class="list-group-item list-group-item-action list-group-item-dark" id="list-languages-list" data-toggle="list" href="#Languages" role="tab" aria-controls="languages">Lenguajes</a>
+              <a class="list-group-item list-group-item-action list-group-item-dark" id="list-populargenres-list" data-toggle="list" href="#PopularGenres" role="tab" aria-controls="popularGenres">Popularidad de generos</a>
+            </div>
+          </div>
+          <div class = "col-md-10 col-sm-12">
+            <div class="tab-content h-100" id="nav-tabContent">
+              <a class="btn btn-primary" id="DownloadLink" download="" href="/" role="button">
+                Descargar
+              </a>
+              <div class="tab-pane fade show active h-100" id="Genres" role="tabpanel" aria-labelledby="list-genre-list">
+                <div id="GenresChart" class="h-100"></div>
+              </div>
+              <div class="tab-pane fade h-100" id="Companies" role="tabpanel" aria-labelledby="list-companies-list">
+                <div id="CompaniesChart" class="h-100"></div>
+              </div>
+              <div class="tab-pane fade h-100" id="Languages" role="tabpanel" aria-labelledby="list-languages-list">
+                <div id="LanguagesChart" class="h-100"></div>
+              </div>
+              <div class="tab-pane fade h-100" id="PopularGenres" role="tabpanel" aria-labelledby="list-populargenres-list">
+                <div id="PopularGenresChart" class="h-100"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
                 
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

@@ -10,9 +10,27 @@ class MoviesService {
         this.dbCollection = dbCollection;
     }
 
-    search = (query, projection, order, offset, limit) => {
+    search = (query, projection, order, offset, limit, group_by) => {
         return new Promise((resolve, reject) => {
 
+            let params = [];
+
+            if( group_by ){
+                const { group_field, group_expressions, group_unwind } = group_by;
+                if( group_field && group_expressions){
+                    if( group_unwind )
+                        params.push({
+                            $unwind: "$" + group_field
+                        })
+                    let group = {
+                        _id: "$" + group_field,
+                        ...group_expressions
+                    }
+                    params.push( {
+                        $group : group
+                    });
+                }
+            }
             let match = {};
             if(query){
                 const { id, title, original_title, popularity_min, popularity_max,
@@ -103,6 +121,9 @@ class MoviesService {
                 if(and.length > 0 ) match["$and"] = and;
                 if(or.length > 0 ) match["$or"] = or;
             }
+            params.push({
+                $match: match
+            });
 
             if(projection){
                 if(projection.col_poster_path){
@@ -137,20 +158,30 @@ class MoviesService {
                 }
             }
 
+            params.push({
+                $project: projection
+            });
+
             if( !order ) order = {
                 //Default sorting by id
                 id: 1
             }
+            params.push({
+                $sort: order
+            });
+
             if( !offset ) offset = 0;
             if( !limit ) limit = defaultLimit;
             
-            const cursor = this.Collection.aggregate([
-                {$match: match},
-                {$project: projection},
-                {$sort : order},
-                {$skip : offset},
-                {$limit : limit}
-            ]);
+            params.push({
+                $skip: offset
+            });
+
+            params.push({
+                $limit: limit
+            });
+
+            const cursor = this.Collection.aggregate( params );
             let arr = [];
             let found_at_least_one = false;
             cursor.forEach((row) => {
