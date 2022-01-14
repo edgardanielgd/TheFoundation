@@ -193,10 +193,12 @@
     genRequestJson = (frmData) => {
         let jsonRequest = {}
         let query = {}
+        let sort = {}
         const type = frmData.get( "Tipo" );
         const value = frmData.get( "Valor" );
         const min = frmData.get( "Min" );
         const max = frmData.get( "Max" );
+        const orderType = frmData.get( "Orden" );
         switch(type){
             case "1":{
                 if( !value ){
@@ -271,9 +273,38 @@
                 };
             }
         }
+
+        switch( orderType ){
+            case "1":{
+                sort = {
+                    id: 1
+                }
+                break;
+            }
+            case "2":{
+                sort = {
+                    id: -1
+                }
+                break;
+            }
+            case "3":{
+                sort = {
+                    title: 1
+                }
+                break;
+            }
+            case "4":{
+                sort = {
+                    title: -1
+                }
+                break;
+            }
+        }
         jsonRequest["query"] = query;
+        jsonRequest["sort"] = sort;
         jsonRequest["projection"] = default_projection;
         jsonRequest["limit"] = maxCards;
+
 
         return jsonRequest;
     }
