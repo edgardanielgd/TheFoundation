@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Menú - The Foundation</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="icon" href="./assets/images/logo.png">
+
+        <link href="Movies/Templates/css/nav-menu.css" rel="stylesheet">
+        <link href="Movies/Templates/css/movies-menu.css" rel="stylesheet">
+        <script src="https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js"></script>
+
+        <script src="scripts/Utilities.js"></script>
+        <script src="scripts/Views/user-menu.js"></script>
+
+        <script src="scripts/Views/Manage-search.js"></script>
+        <script src="scripts/Views/Manage-MPM.js"></script>
+    </head>
+    <body>
+        
+        
+        <script>
+            const changeOption = () => {
+                let Search = document.getElementById('slcType');
+                    if(Search.value == '3' || Search.value == '4'){
+                        document.getElementById('grpValue').className = 'd-none';
+                        document.getElementById('grpMinMax').className = 'form-group mb-2 frmSubData';
+                    }else{
+                        document.getElementById('grpValue').className = 'form-group mb-2 frmSubData';
+                        document.getElementById('grpMinMax').className = 'd-none';
+                    }
+            }
+            window.addEventListener("load", async () => {
+                document.getElementById("slcType").value = "1";
+            },false);
+        </script>
+        <div class="container-fluid" id="main-container">
+            <div class="row mt-3 justify-content-center">
+                <div class = "col-md-auto">
+                    <h4>Encuentra tus películas con varios filtros!</h4>
+                </div>
+            </div>
+            <div class = "row mt-2">
+                    <form id="frmBusqueda" class="col-12 form-inline justify-content-center align-items-center">
+                        <div class = "form-group mb-2 frmSubType">
+                            <label for="slcType" class="mr-lg-2 mr-md-1 mr-sm-0 text-center">Tipo de búsqueda</label>
+                            <select class = "form-control mr-lg-2 mr-md-1 mr-sm-0" id="slcType" name ="Tipo" onchange= "changeOption()" >
+                                <option value="1">Id</option>
+                                <option value="2">Título original</option>
+                                <option value="3">Popularidad</option>
+                                <option value="4">Duracion</option>
+                                <option value="5">Título</option>
+                                <option value="6">Género</option>
+                                <option value="7">Palabra Clave</option>
+                                <option value="8">Lenguaje</option>
+                            </select>
+                        </div>
+                        <div class = "form-group mb-2 frmSubData" id="grpValue">
+                            <label for="txtValue" class="mr-lg-2 mr-md-1 mr-sm-0 ml-lg-2 ml-md-1 ml-sm-0 text-center">Valor</label>
+                            <input id = "txtValue" type="text" class="form-control mr-lg-2 mr-md-1 mr-sm-0" name="Valor"
+                            placeholder="Digita un valor">
+                        </div>
+                        <div class = "d-none" id="grpMinMax">
+                            <div class = "form-group">
+                                <label for="txtMin" class="mr-lg-2 mr-md-1 mr-sm-0 ml-lg-2 ml-md-1 ml-sm-0 text-center">Mínimo</label>
+                                <input type="number" min="0" step=".01" id="txtMin" name="Min" class="form-control mr-lg-2 mr-md-1 mr-sm-0"
+                                placeholder="Digite el valor mínimo">
+                            </div>
+                            <div class = "form-group">
+                                <label for="txtMax" class="mr-lg-2 mr-md-1 mr-sm-0 ml-lg-2 ml-md-1 ml-sm-0 text-center">Máximo</label>
+                                <input type="number" min="0" step=".01" id="txtMax" name="Max" class="form-control mr-lg-2 mr-md-1 mr-sm-0"
+                                placeholder="Digite el valor máximo">
+                            </div>
+                        </div>
+                        <div class = "form-group mb-2 frmSubData">
+                            <label for="slcOrder" class="mr-lg-2 mr-md-1 mr-sm-0 text-center">Orden</label>
+                            <select class = "form-control mr-lg-2 mr-md-1 mr-sm-0" id="slcOrder" name ="Orden">
+                                <option value="1">Id asc.</option>
+                                <option value="2">Id desc.</option>
+                                <option value="3">Titulo asc.</option>
+                                <option value="4">Titulo desc.</option>
+                            </select>
+                        </div>
+                        <div class = "form-group mb-2">
+                            <input type="submit" name="Aceptar" class="btn btn-outline-light ml-lg-2 ml-md-1 ml-sm-0">
+                        </div>
+                    </form>
+                </div>
+                <div id="result" class="row mt-2 justify-content-center">
+                    <div class="alert alert-success">
+                        No has filtrado nada aún
+                    </div>
+                </div>
+
+                <div class="row mt-3 justify-content-center">
+                    <div class = "col-md-auto">
+                        <h4>Películas populares:</h4>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="container-fluid">
+                        <div id="divCarouselPopularity" class="carousel slide" data-ride="carousel">
+                            <div class="container carousel-inner justify-content-center" id="divMPM">
+                                
+                            </div>
+                            <a class="carousel-control-prev" href="#divCarouselPopularity" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                              </a>
+                              <a class="carousel-control-next" href="#divCarouselPopularity" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                              </a>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip({
+                    "placement": "right"
+                })
+            })
+        </script>
+    </body>
+</html>
