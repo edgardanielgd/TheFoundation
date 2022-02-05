@@ -65,7 +65,7 @@
         new_option.value = max_genre_id;
         new_option.innerHTML = name;
         new_option.selected = true;
-        listed_genres[ max_genre_id ] = { max_genre_id, name };
+        listed_genres[ max_genre_id ] = { id:max_genre_id, name };
 
 
         div.appendChild( new_option );
@@ -81,7 +81,7 @@
         new_option.value = max_company_id;
         new_option.innerHTML = name;
         new_option.selected = true;
-        listed_companies[ max_company_id ] = { max_company_id, name };
+        listed_companies[ max_company_id ] = { id:max_company_id, name };
 
         div.appendChild( new_option );
     }
