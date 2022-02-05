@@ -465,7 +465,6 @@ class MoviesService {
                         }})
                     .fromFile(file)
                     .then(csvData => {
-                                console.log( "entra" )
                                 insertMany(csvData, defaultCollection );
                             }
                         )

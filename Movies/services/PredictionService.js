@@ -136,7 +136,7 @@ class PredictionService {
         prediction.print();*/
     }
 
-    predict = ( id ) => {
+    predict = ( param_id ) => {
         const model = this.model;
         if( !model ){
             resolve({
@@ -145,7 +145,7 @@ class PredictionService {
         }
         return new Promise( async (resolve, reject) => {
             try{
-                if( !id ){
+                if( !param_id ){
                     resolve({
                         error : "No id provided"
                     });

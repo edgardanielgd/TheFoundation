@@ -10,7 +10,7 @@ class MoviesManager{
                 const { query, projection, sort, offset, limit, group_by, new_document} = req.body;
                 var response;
                 if( new_document ){ //Insertion
-                    response = await service.insertMany( [new_document], service.Collection );
+                    response = await service.insertOne( new_document, service.Collection );
                 }else{ //Query
                     response = await service.search( query, projection, sort, offset, limit, group_by);
                 }
@@ -25,7 +25,6 @@ class MoviesManager{
                 const { id } = req.params;
                 const { updated_document} = req.body;
                 const response = await service.updateOne( id, updated_document );
-                console.log( response );
                 res.send( response );
             }catch(e){
                 next(e);

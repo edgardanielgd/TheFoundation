@@ -1,12 +1,12 @@
 (function (window,undefined) {
-    const selected_genres = {};
-    const selected_companies = {};
+    const listed_genres = {};
+    const listed_companies = {};
     let editing = false;
     let entry = null;
     let max_genre_id = 0;
     let max_company_id = 0;
     
-    const setDivInfo = ( requestObject, div, type, insertion_array) => {
+    const setDivInfo = ( requestObject, div, type) => {
         
         requestObject.onload = function(){
             if( requestObject.getResponseHeader("content-type").includes("application/json")){
@@ -28,8 +28,10 @@
                         
                         if( type == "genre"){
                             if( id > max_genre_id) max_genre_id = id;
+                            listed_genres[id] = {id, name};
                         }else if(type == "company"){
                             if( id > max_company_id) max_company_id = id;
+                            listed_companies[id] = {id, name};
                         }
                         
                         const new_option = document.createElement( "option" );
@@ -38,22 +40,15 @@
                         new_option.value = id;
                         new_option.innerHTML = name;
 
-                        if( editing && entry_genres[id] && type == "genre")
-                            new_option.selected = true
-                        if( editing && entry_companies[id] && type == "company")
-                            new_option.selected = true
-
-                        new_option.addEventListener("click", () => {
-                            if( new_option.selected ){
-                                insertion_array[id] = { id, name};
-                            }else{
-                                insertion_array[id] = null;
-                            }
-                        });
+                        if( editing && entry_genres[id] && type == "genre"){
+                            new_option.selected = true;
+                        }
+                        if( editing && entry_companies[id] && type == "company"){
+                            new_option.selected = true;
+                        }
 
                         div.appendChild( new_option );
                     }
-                    
                 }
             }
             
@@ -67,17 +62,11 @@
         const new_option = document.createElement( "option" );
         const chkId = "chk" + ++max_genre_id + "_" + name;
         new_option.id = chkId;
-        new_option.value = max_genre_id;
+        new_option.value = max_genre_id++;
         new_option.innerHTML = name;
-        selected_genres[max_genre_id] = { max_genre_id, name};
         new_option.selected = true;
-        new_option.addEventListener("change", () => {
-            if( new_option.selected ){
-                insertion_array[max_genre_id] = { max_genre_id, name};
-            }else{
-                insertion_array[max_genre_id] = null;
-            }
-        });
+        listed_genres[ id ] = { id, name };
+
 
         div.appendChild( new_option );
     }
@@ -89,17 +78,10 @@
         const new_option = document.createElement( "option" );
         const chkId = "chk" + ++max_company_id + "_" + name
         new_option.id = chkId;
-        new_option.value = max_company_id;
+        new_option.value = max_company_id++;
         new_option.innerHTML = name;
-        selected_companies[max_company_id] = { max_company_id, name};
         new_option.selected = true;
-        new_option.addEventListener("change", () => {
-            if( new_option.selected ){
-                insertion_array[max_company_id] = { max_company_id, name};
-            }else{
-                insertion_array[max_company_id] = null;
-            }
-        });
+        listed_companies[ id ] = { id, name };
 
         div.appendChild( new_option );
     }
@@ -146,8 +128,8 @@
         const genresDiv = document.getElementById( "grpGenres" );
         const companiesDiv = document.getElementById( "grpCompanies" );
         
-        setDivInfo( xhrGenres, genresDiv, "genre", selected_genres);
-        setDivInfo( xhrCompanies, companiesDiv, "company", selected_companies);
+        setDivInfo( xhrGenres, genresDiv, "genre");
+        setDivInfo( xhrCompanies, companiesDiv, "company");
         xhrGenres.open("POST","http://localhost:3000/api_v1/movies/");
         
         xhrGenres.setRequestHeader("Content-type","application/json; charset=utf-8");
@@ -202,6 +184,9 @@
         
         frmAgregar.addEventListener("submit", (event) => {
             event.preventDefault();
+
+            const confirmation = confirm("¿Seguro de que desea "+ 
+                ((editing) ? "editar" : "agregar")+ " la información?");
             const formData = new FormData( frmAgregar );
             const jsonData = validateAndGenerate( formData );
 
@@ -212,7 +197,14 @@
                     const response = JSON.parse(opXHR.response);
                     
                     if( response.error ){
-                        showMessage( 0, JSON.stringify(response.error));
+                        if( response.error.details && response.error.details.length > 0){
+                            for(let i = 0; i < response.error.details.length; i++){
+                                showMessage( 0, JSON.stringify(response.error.details[i].message));
+                            }
+                        }else{
+                            showMessage( 1, JSON.stringify(response.error));
+                        }
+                        
                     }else if( response.success ){
                         showMessage( 1, response.success);
                     }
@@ -316,15 +308,18 @@
         const genres = [];
         const production_companies = [];
 
-        for( const genre in selected_genres){
-            const value = selected_genres[ genre ];
-            if( value)
+        const genresDiv = document.getElementById( "grpGenres" );
+        const companiesDiv = document.getElementById( "grpCompanies" );
+
+        for( const option of genresDiv.selectedOptions ){
+            const value = listed_genres[ option.value ];
+            if( value )
                 genres.push( value );
         }
-        for( const company in selected_companies){
-            const value = selected_companies[ company ];
+        for( const option of companiesDiv.selectedOptions ){
+            const value = listed_genres[ option.value ];
             if( value )
-                production_companies.push( value );
+            production_companies.push( value );
         }
 
         const jsonData = {
