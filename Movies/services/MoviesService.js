@@ -228,39 +228,32 @@ class MoviesService {
                     })
                     return;
                 }
-                for(let i = 0; i < data.length; i++){
-                    const reg = data[i];
-                    if( !reg ){
-                        resolve({
-                            error: "Invalid entry No." + i
-                        });
-                        return;
-                    }
-                    if( !reg.id ){
-                        if( !maxId ){
-                            const firstEntry = await Collection.findOne({}, {
-                                projection:{
-                                    
-                                },
-                                sort:{
-                                    id: -1
-                                }
-                            });
-                            if( firstEntry ){
-                                maxId = parseInt(firstEntry.id);
-                            }else{
-                                maxId = 0;
-                            }    
+                const reg = data;
+                if( !reg ){
+                    resolve({
+                        error: "Invalid entry No." + i
+                    });
+                    return;
+                }
+                if( !reg.id ){
+                    const firstEntry = await Collection.findOne({}, {
+                        sort:{
+                            id: -1
                         }
-                        data[i].id = ++maxId; //Keeps it incremental
+                    });
+                    if( firstEntry ){
+                        maxId = parseInt(firstEntry.id);
+                    }else{
+                        maxId = 0;
                     }
-                    const validationResult = moviesSchema.validate( reg );
-                    if( validationResult.error ){
-                        resolve({
-                            error: validationResult.error + "\nat: " + i
-                        });
-                        return;
-                    }
+                    data.id = ++ maxId; //Keeps it incremental
+                }
+                const validationResult = moviesSchema.validate( reg );
+                if( validationResult.error ){
+                    resolve({
+                        error: validationResult.error + "\nat: " + i
+                    });
+                    return;
                 }
                 
                 Collection.insertOne(data, (err,resM) => {

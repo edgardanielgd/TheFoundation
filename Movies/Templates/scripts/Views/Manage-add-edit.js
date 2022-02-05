@@ -62,10 +62,10 @@
         const new_option = document.createElement( "option" );
         const chkId = "chk" + ++max_genre_id + "_" + name;
         new_option.id = chkId;
-        new_option.value = max_genre_id++;
+        new_option.value = max_genre_id;
         new_option.innerHTML = name;
         new_option.selected = true;
-        listed_genres[ id ] = { id, name };
+        listed_genres[ max_genre_id ] = { max_genre_id, name };
 
 
         div.appendChild( new_option );
@@ -78,10 +78,10 @@
         const new_option = document.createElement( "option" );
         const chkId = "chk" + ++max_company_id + "_" + name
         new_option.id = chkId;
-        new_option.value = max_company_id++;
+        new_option.value = max_company_id;
         new_option.innerHTML = name;
         new_option.selected = true;
-        listed_companies[ id ] = { id, name };
+        listed_companies[ max_company_id ] = { max_company_id, name };
 
         div.appendChild( new_option );
     }
