@@ -26,6 +26,7 @@ if(User && Password){
     url = "mongodb://localhost:27017";
 }
 const file = join(__dirname,"data/test.csv");
+const trainFile = join(__dirname,"data/train.csv");
 
 app.use(express.json());
 app.use(express.urlencoded({
@@ -59,6 +60,15 @@ app.get("/statistics", checkJwt, checkScopes(["read:statistics"]),(_,res)=>{
     res.sendFile(join(__dirname,"Movies/Templates/statistics.html"));
 });
 
+app.get("/predictions", checkJwt, checkScopes(["read:statistics"]),(_,res)=>{
+    //Admins only
+    res.sendFile(join(__dirname,"Movies/Templates/predictions.html"));
+});
+
+app.get("/movies_edit_add", checkJwt, checkScopes(["read:statistics"]),(_,res)=>{
+    //Admins only
+    res.sendFile(join(__dirname,"Movies/Templates/add-edit.html"));
+});
 app.listen(port , ()=>{
     console.log("Server listening on localhost:3000\n");
     mongodb.connect(
@@ -66,7 +76,7 @@ app.listen(port , ()=>{
        {useNewUrlParser : true, useUnifiedTopology: true},
        (err,client) =>{
             if (err) throw err;
-            config.configurar(app,client,file,dbname,collectionName,checkJwt);
+            config.configurar(app,client,file,trainFile,dbname,collectionName,checkJwt);
        });
 });
 

@@ -1,4 +1,6 @@
 const csvtojson = require("csvtojson");
+const { resolve } = require("path/posix");
+const { moviesSchema } =require("../Schemas/moviesSchema");
 const defaultLimit = 20;
 
 class MoviesService {
@@ -41,7 +43,14 @@ class MoviesService {
                 let or = [];
                 
                 if(id){
-                    match["id"] = {"$eq":id};
+                    or.push(
+                        {
+                            id: { $eq: parseInt( id ) }
+                        },
+                        {
+                            id: { $eq: id.toString() }
+                        }
+                    )
                 }
 
                 if(title){
@@ -209,19 +218,158 @@ class MoviesService {
         });
     }
 
-    insertMany = (data) => {
-        return new Promise( (resolve, reject) => {
-            this.Collection.insertMany(data, (err,resM) => {
-                if(err) reject(err);
-                console.log("Inserted : "+resM.insertedCount+" rows");
-                resolve(resM.insertedCount);
+    insertOne = (data, Collection) => {
+        return new Promise( async (resolve, reject) => {
+            try{
+                let maxId = null;
+                if( !data || !Collection){
+                    resolve({
+                        error: "Invalid data provided"
+                    })
+                    return;
+                }
+                for(let i = 0; i < data.length; i++){
+                    const reg = data[i];
+                    if( !reg ){
+                        resolve({
+                            error: "Invalid entry No." + i
+                        });
+                        return;
+                    }
+                    if( !reg.id ){
+                        if( !maxId ){
+                            const firstEntry = await Collection.findOne({}, {
+                                projection:{
+                                    
+                                },
+                                sort:{
+                                    id: -1
+                                }
+                            });
+                            if( firstEntry ){
+                                maxId = parseInt(firstEntry.id);
+                            }else{
+                                maxId = 0;
+                            }    
+                        }
+                        data[i].id = ++maxId; //Keeps it incremental
+                    }
+                    const validationResult = moviesSchema.validate( reg );
+                    if( validationResult.error ){
+                        resolve({
+                            error: validationResult.error + "\nat: " + i
+                        });
+                        return;
+                    }
+                }
+                
+                Collection.insertOne(data, (err,resM) => {
+                    if(err) reject(err);
+                    console.log("Inserted : "+resM.insertedCount+" rows");
+                    resolve({
+                        insertedRows: resM.insertedCount,
+                        success: "Inserted successfully"
+                    });
+                });
+            }catch(e){
+                resolve({
+                    error: "There ocurred an error while adding an entry :"+ e.message
+                });
+            }
             });
-        });
     }
 
-    generate = (file) => {
+    insertMany = (data, Collection) => {
+        return new Promise( async (resolve, reject) => {
+            
+            try{
+                Collection.insertMany(data, (err,resM) => {
+                    if(err) reject(err);
+                    console.log("Inserted : "+resM.insertedCount+" rows");
+                    resolve({
+                        insertedRows: resM.insertedCount,
+                        success: "Inserted successfully"
+                    });
+                });
+            }catch(e){
+                resolve({
+                    error: "There ocurred an error while adding an entry :"+ e.message
+                });
+            }
+            });
+        
+    }
+
+    updateOne = (param_id, document) => {
+        return new Promise( async (resolve, reject) => {
+            try{
+                const validationResult = moviesSchema.validate( document );
+                if( validationResult.error ){
+                    resolve({
+                        error: validationResult.error
+                    });
+                    return;
+                }
+
+                const updateDocument = {
+                    $set: document
+                };
+                
+                this.Collection.findOneAndUpdate(
+                    {
+                        $or: [
+                            {"id" : { $eq: param_id.toString() } },
+                            {"id" : { $eq: parseInt( param_id ) } }
+                        ]
+                    },
+                    updateDocument
+                )
+                .then(() => {
+                    resolve({
+                        success: "Updated successfully"
+                    })
+                })
+                .catch( e => {
+                    resolve({
+                        error: e.message
+                    })
+                })
+            }catch(e){
+                resolve({
+                    error: "There ocurred an error while adding an entry :"+ e.message
+                });
+            }
+        })
+    }
+
+    deleteOne = ( param_id ) => {
+        return new Promise( async (resolve, reject) => {
+            this.Collection.findOneAndDelete(
+                {
+                    $or: [
+                        {"id" : { $eq: param_id.toString() } },
+                        {"id" : { $eq: parseInt( param_id ) } }
+                    ]
+                }
+            )
+            .then( () => {
+                resolve({
+                    success: "Deleted successfully"
+                });
+            })
+            .catch( e => {
+                resolve({
+                    error: e.message
+                })
+            })
+        })
+    }
+
+    generate = (file, trainFile, predService) => {
         const db = this.db;
         const colName = this.dbCollection;
+        const defaultCollection = this.Collection;
+        const trainCollection = db.collection("Train");
         const insertMany = this.insertMany;
         const parseHelper = (item,head,resultRow,row,colIdx) => {
             // Converting to JSON format second degree subdocuments
@@ -262,6 +410,78 @@ class MoviesService {
             }).next((err,col) => {
                 //Checking if collection exists
                 if(!col){
+                    
+                    csvtojson({
+                        colParser:{
+                            //Functions for manage correct parsing of all sub-documents
+                            "genres":function(item,head,resultRow,row,colIdx) {
+                                return parseHelper(item,head,resultRow,row,colIdx)
+                            },
+                            "belongs_to_collection":function(item,head,resultRow,row,colIdx){
+                                return parseHelper(item,head,resultRow,row,colIdx)
+                            },
+                            "production_companies":function(item,head,resultRow,row,colIdx){
+                                return parseHelper(item,head,resultRow,row,colIdx)
+                            },
+                            "production_countries":function(item,head,resultRow,row,colIdx){
+                                return parseHelper(item,head,resultRow,row,colIdx)
+                            },
+                            "spoken_languages":function(item,head,resultRow,row,colIdx){
+                                return parseHelper(item,head,resultRow,row,colIdx)
+                            },
+                            "Keywords":function(item,head,resultRow,row,colIdx){
+                                return parseHelper(item,head,resultRow,row,colIdx)
+                            },
+                            "crew":function(item,head,resultRow,row,colIdx){
+                                return parseHelper(item,head,resultRow,row,colIdx)
+                            },
+                            "cast":function(item,head,resultRow,row,colIdx){
+                                return parseHelper(item,head,resultRow,row,colIdx)
+                            },
+                            "id":function(item,head,resultRow,row,colIdx){
+                                return parseInt( item )
+                            },
+                            "budget":function(item,head,resultRow,row,colIdx){
+                                const parsed = parseFloat( item );
+                                if( !isNaN( parsed ))
+                                    return parsed;
+                                else
+                                    return "";
+                            },
+                            "popularity":function(item,head,resultRow,row,colIdx){
+                                const parsed = parseFloat( item );
+                                if( !isNaN( parsed ))
+                                    return parsed;
+                                else
+                                    return "";
+                            },
+                            "runtime":function(item,head,resultRow,row,colIdx){
+                                const parsed = parseFloat( item );
+                                if( !isNaN( parsed ))
+                                    return parsed;
+                                else
+                                    return "";
+                            },
+                        }})
+                    .fromFile(file)
+                    .then(csvData => {
+                                console.log( "entra" )
+                                insertMany(csvData, defaultCollection );
+                            }
+                        )
+                    .catch( e => {
+                        console.log( e )
+                    })
+                }else{
+                    console.log("Collection succesfully found");
+                }
+            });
+            
+            db.listCollections({
+                name:"Train"
+            }).next((err,col) => {
+                //Checking if collection exists
+                if(!col){
                     csvtojson({
                         colParser:{
                             //Functions for manage correct parsing of all sub-documents
@@ -290,16 +510,19 @@ class MoviesService {
                                 return parseHelper(item,head,resultRow,row,colIdx)
                             }
                         }})
-                    .fromFile(file)
+                    .fromFile(trainFile)
                     .then(csvData => {
-                                insertMany(csvData);
+                                insertMany(csvData, trainCollection );
+                                predService.train( csvData );
                             }
                         )
                 }else{
-                    console.log("Collection succesfully found");
+                    let allEntries = [];
+                    predService.train( db.collection("Train").find() );
+                    
+                    console.log("Train Collection succesfully found");
                 }
             });
-            
         }
 
         readData();
