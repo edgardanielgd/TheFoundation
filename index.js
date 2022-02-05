@@ -43,7 +43,6 @@ app.use(express.static(join(__dirname,"Movies/Templates")));
 
 ({ checkJwt, checkScopes} = AuthConfig(ConfigEnv.DOMAIN, ConfigEnv.AUDIENCE) );
 
-
 app.get("/",(_,res)=>{
     res.sendFile(join(__dirname,"Movies/Templates/index.html"))
 });
@@ -70,13 +69,14 @@ app.get("/movies_edit_add", checkJwt, checkScopes(["read:statistics"]),(_,res)=>
     res.sendFile(join(__dirname,"Movies/Templates/add-edit.html"));
 });
 app.listen(port , ()=>{
+    
     console.log("Server listening on localhost:3000\n");
     mongodb.connect(
        url,
        {useNewUrlParser : true, useUnifiedTopology: true},
        (err,client) =>{
             if (err) throw err;
-            config.configurar(app,client,file,trainFile,dbname,collectionName,checkJwt);
+            config.configurar(app,client,file,trainFile,dbname,collectionName,checkJwt,checkScopes);
        });
 });
 

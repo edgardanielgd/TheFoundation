@@ -1,5 +1,6 @@
 (function (window, undefined) {
     const maxCards = 50;
+    let roles;
     const renames_data = {
       id: "Id",
       poster_path: "Poster",
@@ -56,26 +57,31 @@
             let cHeader = document.createElement("div");
             cHeader.className = "card-header";
             
-            let cEditButton = document.createElement("button");
-            cEditButton.className = "btn btn-warning";
-            cEditButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-          </svg>`;
             
-            let cDeleteButton = document.createElement("button");
-            cDeleteButton.className = "btn btn-danger ml-3";
-            cDeleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-          </svg>`;
-
-            let cPredictButton = document.createElement("button");
-            cPredictButton.className = "btn btn-primary ml-3";
-            cPredictButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hourglass-split" viewBox="0 0 16 16">
-              <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1h-11zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2h-7zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48V8.35zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
+              let cEditButton = document.createElement("button");
+              cEditButton.className = "btn btn-warning";
+              cEditButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+              <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
             </svg>`;
-            cHeader.appendChild(cEditButton);
-            cHeader.appendChild(cDeleteButton);
-            cHeader.appendChild(cPredictButton);
+              
+              let cDeleteButton = document.createElement("button");
+              cDeleteButton.className = "btn btn-danger ml-3";
+              cDeleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+              <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+            </svg>`;
+
+              let cPredictButton = document.createElement("button");
+              cPredictButton.className = "btn btn-primary ml-3";
+              cPredictButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hourglass-split" viewBox="0 0 16 16">
+                <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1h-11zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2h-7zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48V8.35zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
+              </svg>`;
+              
+              if( roles.includes("Administrator") ){
+                cHeader.appendChild(cEditButton);
+                cHeader.appendChild(cDeleteButton);
+                cHeader.appendChild(cPredictButton);
+              }
+            
   
             let cBody = document.createElement("div");
             cBody.className = "card-body customCardBodyStyle";
@@ -134,18 +140,20 @@
                   homeLink.className = "btn btn-outline-light mb-2";
                   homeLink.textContent = "Página principal";
                 } else if(subkey == "id"){
-                  cEditButton.addEventListener("click",(event) => {
-                    event.preventDefault();
-                    window.open("http://localhost:3000/movies_edit_add?edit=true&id="+ value)
-                  });
-                  cPredictButton.addEventListener("click",(event) => {
-                    event.preventDefault();
-                    window.open("http://localhost:3000/predictions?id="+ value)
-                  });
-                  cDeleteButton.addEventListener("click",(event) => {
-                    event.preventDefault();
-                    prepareDeletion( value, card );
-                  });  
+                  if( roles.includes("Administrator") ){
+                    cEditButton.addEventListener("click",(event) => {
+                      event.preventDefault();
+                      window.open("http://localhost:3000/movies_edit_add?edit=true&id="+ value)
+                    });
+                    cPredictButton.addEventListener("click",(event) => {
+                      event.preventDefault();
+                      window.open("http://localhost:3000/predictions?id="+ value)
+                    });
+                    cDeleteButton.addEventListener("click",(event) => {
+                      event.preventDefault();
+                      prepareDeletion( value, card );
+                    });  
+                  }
                 } else {
                   let cRow = document.createElement("div");
                   cRow.className = "row";
@@ -195,7 +203,10 @@
     };
     window.addEventListener("load", async () => {
       let form = document.getElementById("frmBusqueda");
-  
+      const auth0 = (await Utilities.configureAuth());
+      await auth0.checkSession();
+      roles = await Utilities.getRoles(auth0);
+
       form.addEventListener("submit", function (event) {
         event.preventDefault();
   
@@ -224,10 +235,15 @@
       });
 
       const addButton = document.getElementById("btnAdd");
-      addButton.addEventListener("click", (event) => {
+      if( roles.includes("Administrator") ){
+        addButton.addEventListener("click", (event) => {
           event.preventDefault();
           window.open("http://localhost:3000/movies_edit_add?edit=false","_blank").focus();
-      })
+        })  
+      }else{
+        addButton.className = "d-none";
+      }
+      
     });
   
     genRequestJson = (frmData) => {

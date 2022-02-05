@@ -4,9 +4,9 @@ const moviesPath = "/movies";
 const predictionsPath = "/moviesPredictions";
 
 class Configuracion{
-    constructor(app,mongoclient,file,trainFile,dbname,collectionName,checkJwt){
-        const MoviesManager = moviesRouter(mongoclient,dbname,collectionName);
-        const PredictionsManager = predictionsRouter(mongoclient,dbname,collectionName);
+    constructor(app,mongoclient,file,trainFile,dbname,collectionName,checkJwt,checkScopes){
+        const MoviesManager = moviesRouter(mongoclient,dbname,collectionName,checkJwt,checkScopes);
+        const PredictionsManager = predictionsRouter(mongoclient,dbname,collectionName,checkJwt,checkScopes);
         const router = require("express").Router();
         app.use("/api_v1", router);
         router.use( moviesPath, MoviesManager.router);
@@ -16,6 +16,6 @@ class Configuracion{
         MoviesManager.generate(file,trainFile, PredictionsManager.service);
     }
 }
-exports.configurar = (app,mongoclient,file,trainFile,dbname,collectionName,checkJwt) => {
-    new Configuracion(app,mongoclient,file,trainFile,dbname,collectionName,checkJwt);
+exports.configurar = (app,mongoclient,file,trainFile,dbname,collectionName,checkJwt,checkScopes) => {
+    new Configuracion(app,mongoclient,file,trainFile,dbname,collectionName,checkJwt,checkScopes);
 }

@@ -258,7 +258,6 @@ class MoviesService {
                 
                 Collection.insertOne(data, (err,resM) => {
                     if(err) reject(err);
-                    console.log("Inserted : "+resM.insertedCount+" rows");
                     resolve({
                         insertedRows: resM.insertedCount,
                         success: "Inserted successfully"
