@@ -11,6 +11,17 @@
         
         <link href="Movies/Templates/css/nav-menu.css" rel="stylesheet">
         
+        <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+        <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic"
+        />
+        <link rel="stylesheet" href="/assets/fonts/font-awesome.min.css" />
+        <link rel="stylesheet" href="/assets/fonts/simple-line-icons.min.css" />
+        <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"
+        />
 
         <script src="https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js"></script>
         <script src="scripts/Utilities.js"></script>
@@ -19,7 +30,226 @@
         
     </head>
     <body>
-        
+        <body style="background: #3b3a3a">
+            <nav class="navbar navbar-light navbar-expand bg-light navigation-clean">
+              <div class="container">
+                <a class="navbar-brand" href="#">The Foundation</a
+                ><button
+                  data-bs-toggle="collapse"
+                  class="navbar-toggler"
+                  data-bs-target="#navcol-1"
+                ></button>
+                <div class="collapse navbar-collapse" id="navcol-1"></div>
+              </div>
+            </nav>
+            <header
+              class="text-center text-white masthead"
+              style="
+                background: url('/assets/img/bg-masthead.jpg') no-repeat center center;
+                background-size: cover;
+              "
+            >
+              <div class="overlay"></div>
+              <div class="container">
+                <div class="row">
+                  <div
+                    class="col-xl-9 mx-auto position-relative"
+                    style="font-family: Lato, sans-serif"
+                  >
+                    <h1 class="mb-5">Ingeniería de Software 1<br /></h1>
+                    <h2>2021-2</h2>
+                  </div>
+                </div>
+              </div>
+            </header>
+            <section class="text-center bg-light features-icons">
+              <h1>Nuestro Producto</h1>
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-4">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                      <div class="d-flex features-icons-icon">
+                        <i
+                          class="icon-screen-desktop m-auto text-primary"
+                          data-bss-hover-animate="pulse"
+                        ></i>
+                      </div>
+                      <h3>Busca Peliculas</h3>
+                      <p class="lead mb-0">
+                        Puedes filtrar utilizando diversos parámetros dentro de nuestro
+                        gran catalogo
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                      <div class="d-flex features-icons-icon">
+                        <i
+                          class="icon-hourglass m-auto text-primary"
+                          data-bss-hover-animate="pulse"
+                        ></i>
+                      </div>
+                      <h3>No Malgastes el tiempo</h3>
+                      <p class="lead mb-0">
+                        Nuestra aplicación funciona rápidamente para que puedas
+                        encontrar la película que deseas
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                      <div class="d-flex features-icons-icon">
+                        <i
+                          class="icon-check m-auto text-primary"
+                          data-bss-hover-animate="pulse"
+                        ></i>
+                      </div>
+                      <h3>Fácil de Usar</h3>
+                      <p class="lead mb-0">
+                        Nuestro diseño de interfaz facilita la búsqueda.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="showcase">
+              <div class="container-fluid p-0">
+                <div class="row g-0">
+                  <div
+                    class="col-lg-6 text-white order-lg-2 showcase-img"
+                    style="
+                      background: url('/assets/img/640px-Spaceship_and_Sun_emblem.svg.png');
+                      background-size: contain;
+                    "
+                  >
+                    <span></span>
+                  </div>
+                  <div class="col-lg-6 my-auto order-lg-1 showcase-text">
+                    <h2 style="color: var(--bs-light)">Integrantes</h2>
+                    <p class="lead mb-0" style="color: var(--bs-light)"></p>
+                    <ul style="color: var(--bs-light)">
+                      <li style="color: var(--bs-light)">Edgar Daniel Gonzalez Diaz</li>
+                      <li style="color: var(--bs-light)">
+                        Miguelangel Mosquera Martin
+                      </li>
+                      <li style="color: var(--bs-light)">Juan Felipe Herrera Poveda</li>
+                      <li style="color: var(--bs-light)">
+                        Diego Enrique Molina Sanchez
+                      </li>
+                      <li style="color: var(--bs-light)">Xamir Ernesto Rojas Gamboa</li>
+                      <li style="color: var(--bs-light)">
+                        Miguel Angel Buitrago Castillo
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="row g-0">
+                  <div
+                    class="col-lg-6 text-white showcase-img"
+                    style="
+                      background: url('/assets/img/8725e060-e376-4c82-ae7c-42c1e82a55e6.jpg')
+                          center / contain no-repeat,
+                        #70b46a;
+                    "
+                  >
+                    <span></span>
+                  </div>
+                  <div
+                    class="col-lg-6 my-auto order-lg-1 showcase-text"
+                    style="background: #70b46a"
+                  >
+                    <h2
+                      style="
+                        color: var(--bs-light);
+                        font-family: Lato, sans-serif;
+                        text-align: center;
+                      "
+                    >
+                      Objetivo
+                    </h2>
+                    <p
+                      class="lead mb-0"
+                      style="
+                        color: var(--bs-light);
+                        font-family: Lato, sans-serif;
+                        text-align: left;
+                      "
+                    >
+                      <strong
+                        >Hemos creado una App que permite visualizar información sobre
+                        diferentes peliculas. Los usuarios pueden buscar las peliculas a
+                        partir de diferentes parametros (Nombre, Año, etc).</strong
+                      ><br />
+                    </p>
+                    <p
+                      style="
+                        color: var(--bs-light);
+                        font-family: Lato, sans-serif;
+                        text-align: left;
+                        font-size: 20px;
+                      "
+                    >
+                      <br /><strong
+                        >Adicionalmente los administradores pueden agregar, actualizar o
+                        eliminar peliculas de la base de datos. Y generar reportes sobre
+                        las estadisticas de uso.</strong
+                      ><br />
+                    </p>
+                  </div>
+                </div>
+                <div class="row g-0">
+                  <div
+                    class="col-lg-6 text-white order-lg-2 showcase-img"
+                    style="
+                      background: url('/assets/img/Techs.jpg') top / contain no-repeat;
+                    "
+                  >
+                    <span></span>
+                  </div>
+                  <div class="col-lg-6 my-auto order-lg-1 showcase-text">
+                    <h2 style="color: var(--bs-light); font-size: 27px">
+                      Tecnologías Utilizadas
+                    </h2>
+                    <ul style="color: var(--bs-light); font-size: 27px">
+                      <li style="color: var(--bs-light); font-size: 27px">Auth0</li>
+                      <li style="color: var(--bs-light); font-size: 27px">NodeJS</li>
+                      <li style="color: var(--bs-light); font-size: 27px">MongoDB</li>
+                      <li style="color: var(--bs-light); font-size: 27px">ExpressJS</li>
+                      <li style="font-size: 27px">Bootstrap 5</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <footer class="bg-light footer">
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-6 text-center text-lg-start my-auto h-100">
+                    <ul class="list-inline mb-2">
+                      <li class="list-inline-item"><a href="#">About</a></li>
+                      <li class="list-inline-item"><span>⋅</span></li>
+                      <li class="list-inline-item"><a href="#">Contact</a></li>
+                    </ul>
+                  </div>
+                  <div class="col-lg-6 text-center text-lg-end my-auto h-100">
+                    <ul class="list-inline mb-0">
+                      <li class="list-inline-item">
+                        <a href="#"><i class="fa fa-facebook fa-2x fa-fw"></i></a>
+                      </li>
+                      <li class="list-inline-item">
+                        <a href="#"><i class="fa fa-twitter fa-2x fa-fw"></i></a>
+                      </li>
+                      <li class="list-inline-item">
+                        <a href="#"><i class="fa fa-instagram fa-2x fa-fw"></i></a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </footer>
+            <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+            <script src="/assets/js/bs-init.js"></script>
                 
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
