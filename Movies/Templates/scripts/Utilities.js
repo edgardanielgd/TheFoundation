@@ -29,6 +29,8 @@
     }
     const getRoles = async (authClient) => {
         let claims = await authClient.getIdTokenClaims();
+        let authenticated = await authClient.isAuthenticated();
+        if( !authenticated ) return [];
         let roles = claims[authClient.roles_domain];
         if(roles)
             return roles;

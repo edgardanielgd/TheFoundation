@@ -4,3 +4,14 @@ body{
     background-repeat:no-repeat;
     background-size:cover;
 }
+#main-container{
+    color:antiquewhite;
+}
+.frmSubType{
+    background-color:rgba(11, 40, 167, 0.281);
+    border-radius:5px 0px 0px 5px;
+}
+.frmSubData{
+    background-color: rgba(47, 67, 245, 0.548);
+    border-radius:0px 5px 5px 0px;
+}

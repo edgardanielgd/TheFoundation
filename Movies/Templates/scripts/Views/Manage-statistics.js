@@ -56,6 +56,14 @@ const updateCurrentChart = ( updateData = false) => {
             updatePopularGenresGraph( updateData );
             break;
         }
+        case 5:{
+            updateRuntimeGraph( updateData );
+            break;
+        }
+        case 6:{
+            updateKeywordsGraph( updateData );
+            break;
+        }
     }
 }
 const updateGenresGraph = async ( updateData = false) => {
@@ -360,6 +368,150 @@ const updatePopularGenresGraph = async ( updateData = false) => {
     });
     chart.draw( dataView, options);
 }
+const updateRuntimeGraph = async ( updateData = false) => {
+    if( !graphData || updateData){
+        responseData = await queryData({
+            projection: {
+                _id: 0,
+                title: 1,
+                number_runtime : {
+                    $convert: {
+                        input: "$runtime", to: "decimal",
+                        onError: 0, onNull: 0
+                    }
+                }
+            },
+            sort: {
+                number_runtime: -1
+            },
+            limit: maxElements
+        });
+
+        if( responseData.error || ! responseData.data || ! responseData.data.data) return;
+
+        graphData = responseData.data.data;
+    }
+    
+    let dataArray = [
+        [ "Movie" , "Duración", { role: "style"}]
+    ];
+
+    for( let i = 0; i < graphData.length; i ++){
+        
+        let color;
+        if( colors[i] )
+            color = colors[i];
+        else{
+            color = "#" + Math.floor(Math.random()*16777215).toString(16);
+            colors.push( color );
+        }
+        let value = graphData[i];
+        dataArray.push(
+            [ (value.title) ? (value.title) : "Indefinido",
+            parseFloat(value.number_runtime.$numberDecimal), 
+              color
+            ]
+        ) 
+    }
+    const dataTable = new google.visualization.arrayToDataTable(
+        dataArray
+    );
+    const dataView = new google.visualization.DataView(dataTable);
+    dataView.setColumns([ 0, 1, {
+        calc: "stringify",
+        sourceColumn: 1,
+        type: "string",
+        role: "annotation"
+    }, 2]);
+
+    let options = {
+        title:'Películas por duración en minutos',
+        bar:{
+            groupWidth: "95%"
+        },
+        legend:{
+            position: "none"
+        }
+    };
+    let chart = new google.visualization.BarChart(
+        document.getElementById("RuntimeChart")
+    )
+    google.visualization.events.addListener(chart, 'ready', function () {
+        document.getElementById("DownloadLink").href = chart.getImageURI();
+    });
+    chart.draw( dataView, options);
+}
+const updateKeywordsGraph = async ( updateData = false) => {
+    if( !graphData || updateData){
+        responseData = await queryData({
+            group_by: {
+                group_field: "Keywords",
+                group_unwind: true,
+                group_expressions: {
+                    frequency: {
+                        $sum: 1
+                    }
+                }
+            },
+            projection: {
+                _id: 1,
+                frequency: 1
+            },
+            sort: {
+                frequency: -1
+            },
+            limit: maxElements
+        });
+
+        if( responseData.error || ! responseData.data || ! responseData.data.data) return;
+
+        graphData = responseData.data.data;
+    }
+    
+    let dataArray = [
+        [ "Palabra" , "Frecuencia", { role: "style"}]
+    ];
+
+    for( let i = 0; i < graphData.length; i ++){
+        
+        let color;
+        if( colors[i] )
+            color = colors[i];
+        else{
+            color = "#" + Math.floor(Math.random()*16777215).toString(16);
+            colors.push( color );
+        }
+        let value = graphData[i];
+        dataArray.push(
+            [ (value._id.name) ? (value._id.name) : "Indefinido",
+              value.frequency, 
+              color
+            ]
+        ) 
+    }
+    const dataTable = new google.visualization.arrayToDataTable(
+        dataArray
+    );
+    const dataView = new google.visualization.DataView(dataTable);
+    dataView.setColumns([ 0, 1, {
+        calc: "stringify",
+        sourceColumn: 1,
+        type: "string",
+        role: "annotation"
+    }, 2]);
+
+    let options = {
+        title:'Palabras clave frecuentes',
+        is3D: true
+    };
+    let chart = new google.visualization.PieChart(
+        document.getElementById("KeywordsChart")
+    )
+    google.visualization.events.addListener(chart, 'ready', function () {
+        document.getElementById("DownloadLink").href = chart.getImageURI();
+    });
+    chart.draw( dataView, options);
+}
 
 window.addEventListener("load", async () => {
 
@@ -382,6 +534,14 @@ window.addEventListener("load", async () => {
             }
             case "PopularGenres":{
                 chart_code = 4;
+                break;
+            }
+            case "Runtime": {
+                chart_code = 5;
+                break;
+            }
+            case "Keywords": {
+                chart_code = 6;
                 break;
             }
         }

@@ -75,8 +75,19 @@
                                 placeholder="Digite el valor máximo">
                             </div>
                         </div>
+                        <div class = "form-group mb-2 frmSubData">
+                            <label for="slcOrder" class="mr-lg-2 mr-md-1 mr-sm-0 text-center">Orden</label>
+                            <select class = "form-control mr-lg-2 mr-md-1 mr-sm-0" id="slcOrder" name ="Orden">
+                                <option value="1">Id asc.</option>
+                                <option value="2">Id desc.</option>
+                                <option value="3">Titulo asc.</option>
+                                <option value="4">Titulo desc.</option>
+                            </select>
+                        </div>
                         <div class = "form-group mb-2">
                             <input type="submit" name="Aceptar" class="btn btn-outline-light ml-lg-2 ml-md-1 ml-sm-0">
+                            <button class="btn btn-success ml-lg-2 ml-md-1 ml-sm-0" id="btnAdd">+
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -112,7 +123,6 @@
                 </div>
             </div>
         </div>
-        
         
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
